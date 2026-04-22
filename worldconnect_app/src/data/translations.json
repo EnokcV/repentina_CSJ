@@ -1,0 +1,156 @@
+{
+  "emergency": {
+    "help": {
+      "es": "¡Ayuda! Necesito asistencia",
+      "fr": "Au secours ! J'ai besoin d'aide",
+      "en": "Help! I need assistance"
+    },
+    "medical": {
+      "es": "Emergencia médica",
+      "fr": "Urgence médicale",
+      "en": "Medical emergency"
+    },
+    "lost": {
+      "es": "Estoy perdido/a",
+      "fr": "Je suis perdu(e)",
+      "en": "I'm lost"
+    },
+    "police": {
+      "es": "Llamar a la policía",
+      "fr": "Appeler la police",
+      "en": "Call the police"
+    }
+  },
+  "transportation": {
+    "subway": {
+      "es": "¿Dónde está la estación de Metro más cercana?",
+      "fr": "Où est la station de métro la plus proche ?",
+      "en": "Where is the nearest subway station?"
+    },
+    "bus": {
+      "es": "¿Este autobús va al estadio?",
+      "fr": "Ce bus va-t-il au stade ?",
+      "en": "Does this bus go to the stadium?"
+    },
+    "taxi": {
+      "es": "Necesito un taxi para [dirección]",
+      "fr": "J'ai besoin d'un taxi pour [adresse]",
+      "en": "I need a taxi to [address]"
+    },
+    "traffic": {
+      "es": "Hay mucho tráfico, busquemos otra ruta",
+      "fr": "Il y a beaucoup de circulation, cherchons un autre itinéraire",
+      "en": "There's a lot of traffic, let's find another route"
+    }
+  },
+  "food": {
+    "allergy": {
+      "es": "Soy alérgico/a a [ingrediente]",
+      "fr": "Je suis allergique(e) à [ingrédient]",
+      "en": "I'm allergic to [ingredient]"
+    },
+    "spicy": {
+      "es": "¿Esto está muy picante?",
+      "fr": "Est-ce que c'est très épicé ?",
+      "en": "Is this very spicy?"
+    },
+    "water": {
+      "es": "¿Es agua potable?",
+      "fr": "Est-ce de l'eau potable ?",
+      "en": "Is this drinking water?"
+    },
+    "vegetarian": {
+      "es": "Soy vegetariano/a",
+      "fr": "Je suis végétarien(ne)",
+      "en": "I'm vegetarian"
+    }
+  },
+  "football_slang": {
+    "gol": {
+      "es": "¡GOOOOOL! ¡Qué golazo!",
+      "fr": "BUT ! Quel but magnifique !",
+      "en": "GOAL! What a beautiful goal!"
+    },
+    "porra": {
+      "es": "¡Vamos México! ¡Sí se puede!",
+      "fr": "Allez les Bleus ! On peut le faire !",
+      "en": "Come on Mexico! Yes we can!"
+    },
+    "penal": {
+      "es": "¡Fue penal! ¡El árbitro no vio nada!",
+      "fr": "C'était un penalty ! L'arbitre n'a rien vu !",
+      "en": "That was a penalty! The referee didn't see anything!"
+    },
+    "aficion": {
+      "es": "La afición está que arde",
+      "fr": "Les supporters sont en feu",
+      "en": "The fans are on fire"
+    }
+  },
+  "local_expressions": {
+    "ahorita": {
+      "es": "Ahorita vengo (en un momento)",
+      "fr": "Je reviens tout de suite",
+      "en": "I'll be right back"
+    },
+    "que_padre": {
+      "es": "¡Qué padre! (qué genial)",
+      "fr": "C'est génial !",
+      "en": "How cool!"
+    },
+    "órale": {
+      "es": "Órale, vámonos",
+      "fr": "Allons-y",
+      "en": "Let's go"
+    },
+    "no_mames": {
+      "es": "¡No way! / ¡Increíble!",
+      "fr": "C'est incroyable !",
+      "en": "No way! / Amazing!"
+    }
+  },
+  "negotiation": {
+    "price": {
+      "es": "¿Pueden darme un mejor precio?",
+      "fr": "Pouvez-vous me donner un meilleur prix ?",
+      "en": "Can you give me a better price?"
+    },
+    "accept": {
+      "es": "De acuerdo, acepto",
+      "fr": "D'accord, j'accepte",
+      "en": "Okay, I accept"
+    },
+    "too_expensive": {
+      "es": "Es muy caro para mí",
+      "fr": "C'est trop cher pour moi",
+      "en": "It's too expensive for me"
+    },
+    "discount": {
+      "es": "¿Hay algún descuento?",
+      "fr": "Y a-t-il une réduction ?",
+      "en": "Is there a discount?"
+    }
+  },
+  "social": {
+    "cheers": {
+      "es": "¡Salud! (brindis)",
+      "fr": "Santé ! (trinquer)",
+      "en": "Cheers! (toast)"
+    },
+    "friend": {
+      "es": "¿Podemos ser amigos?",
+      "fr": "Pouvons-nous être amis ?",
+      "en": "Can we be friends?"
+    },
+    "photo": {
+      "es": "¿Podemos tomar una foto juntos?",
+      "fr": "Pouvons-nous prendre une photo ensemble ?",
+      "en": "Can we take a photo together?"
+    },
+    "thanks": {
+      "es": "Muchas gracias, ¡fue increíble!",
+      "fr": "Merci beaucoup, c'était incroyable !",
+      "en": "Thank you very much, it was incredible!"
+    }
+  }
+}
