@@ -247,6 +247,64 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ settings, setSettings }) 
           boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
         }}>
           <h3 style={{ fontSize: getFontSize(), marginBottom: '20px', color: '#2196F3' }}>
+            {settings.language === 'es' ? 'API de OpenRouter' : 
+             settings.language === 'fr' ? 'API OpenRouter' : 
+             'OpenRouter API'}
+          </h3>
+          
+          <div className="api-settings">
+            <div style={{ marginBottom: '15px' }}>
+              <label style={{ 
+                display: 'block', 
+                fontSize: getFontSize(), 
+                marginBottom: '8px',
+                color: '#666'
+              }}>
+                {settings.language === 'es' ? 'Clave API (sk-or-...)' : 
+                 settings.language === 'fr' ? 'Clé API (sk-or-...)' : 
+                 'API Key (sk-or-...)'}
+              </label>
+              <input
+                type="password"
+                value={settings.openrouterApiKey || ''}
+                onChange={(e) => setSettings(prev => ({ ...prev, openrouterApiKey: e.target.value }))}
+                placeholder={settings.language === 'es' ? 'Ingresa tu clave API' : 
+                             settings.language === 'fr' ? 'Entrez votre clé API' : 
+                             'Enter your API key'}
+                style={{
+                  width: '100%',
+                  padding: '12px 15px',
+                  borderRadius: '8px',
+                  border: '1px solid #ddd',
+                  fontSize: getFontSize(),
+                  fontFamily: 'monospace'
+                }}
+              />
+            </div>
+            
+            {settings.openrouterApiKey && (
+              <button
+                onClick={() => setSettings(prev => ({ ...prev, openrouterApiKey: undefined }))}
+                className="btn btn-outline"
+                style={{ borderColor: '#dc3545', color: '#dc3545' }}
+              >
+                <span className="material-icons" style={{ fontSize: '1rem' }}>delete</span>
+                {settings.language === 'es' ? 'Eliminar API' : 
+                 settings.language === 'fr' ? 'Supprimer API' : 
+                 'Remove API'}
+              </button>
+            )}
+          </div>
+        </div>
+
+        <div className="setting-section" style={{
+          background: 'white',
+          borderRadius: '12px',
+          padding: '25px',
+          marginBottom: '20px',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+        }}>
+          <h3 style={{ fontSize: getFontSize(), marginBottom: '20px', color: '#2196F3' }}>
             {settings.language === 'es' ? 'Acerca de' : 
              settings.language === 'fr' ? 'À propos' : 
              'About'}
@@ -282,7 +340,8 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ settings, setSettings }) 
                 vibrationEnabled: true,
                 ecoMode: false,
                 fontSize: 'medium',
-                themeMode: 'system'
+                themeMode: 'system',
+                openrouterApiKey: undefined
               });
             }}
             className="btn btn-warning"

@@ -68,13 +68,13 @@ const QuickActions: React.FC<QuickActionsProps> = ({ setCurrentView, settings })
     }
   };
 
+  const heroTitle = settings.language === 'es' ? 'Habla Como Local' :
+    settings.language === 'fr' ? 'Parle Comme Un Local' :
+    'Speak Like A Local';
+
   return (
     <div className="quick-actions">
-      <h2 style={{ fontSize: getFontSize(), textAlign: 'center', marginBottom: '20px', fontWeight: '700', color: 'var(--color-text)' }}>
-        {settings.language === 'es' ? 'Accesos Rápidos' : 
-         settings.language === 'fr' ? 'Accès Rapides' : 
-         'Quick Actions'}
-      </h2>
+      <h2>{heroTitle}</h2>
       
       <div className="main-grid">
         {quickActions.map((action) => (
@@ -92,67 +92,52 @@ const QuickActions: React.FC<QuickActionsProps> = ({ setCurrentView, settings })
         ))}
       </div>
 
-      <div className="feature-highlights" style={{ marginTop: '30px' }}>
-        <h3 style={{ fontSize: getFontSize(), textAlign: 'center', marginBottom: '15px', fontWeight: '600', color: 'var(--color-text-secondary)' }}>
-          {settings.language === 'es' ? 'Características Principales' : 
-           settings.language === 'fr' ? 'Caractéristiques Principales' : 
-           'Key Features'}
+      <div className="feature-highlights">
+        <h3>
+          {settings.language === 'es' ? 'Características Principales' :
+           settings.language === 'fr' ? 'Caractéristiques Principales' :
+           'Elite Features'}
         </h3>
-        
+
         <div className="feature-list">
-          <div className="feature-item" style={{ 
-            background: 'var(--color-surface)', 
-            padding: '15px', 
-            borderRadius: '8px', 
-            marginBottom: '10px' 
-          }}>
-            <div style={{ fontWeight: '600', marginBottom: '5px', fontSize: getFontSize() }}>
-              <span className="material-icons" style={{ verticalAlign: 'middle', marginRight: '8px', fontSize: '1.2rem' }}>wifi_off</span>
-              {settings.language === 'es' ? 'Modo Offline' : 
-               settings.language === 'fr' ? 'Mode Hors Ligne' : 
+          <div className="feature-item">
+            <div className="feature-title">
+              <span className="material-icons">wifi_off</span>
+              {settings.language === 'es' ? 'Modo Offline' :
+               settings.language === 'fr' ? 'Mode Hors Ligne' :
                'Offline Mode'}
             </div>
-            <div style={{ fontSize: getFontSize(), color: 'var(--color-text-secondary)' }}>
-              {settings.language === 'es' ? 'Funciona sin internet' : 
-               settings.language === 'fr' ? 'Fonctionne sans internet' : 
+            <div className="feature-desc">
+              {settings.language === 'es' ? 'Funciona sin internet' :
+               settings.language === 'fr' ? 'Fonctionne sans internet' :
                'Works without internet'}
             </div>
           </div>
-          
-          <div className="feature-item" style={{ 
-            background: 'var(--color-surface)', 
-            padding: '15px', 
-            borderRadius: '8px', 
-            marginBottom: '10px' 
-          }}>
-            <div style={{ fontWeight: '600', marginBottom: '5px', fontSize: getFontSize() }}>
-              <span className="material-icons" style={{ verticalAlign: 'middle', marginRight: '8px', fontSize: '1.2rem' }}>vibration</span>
-              {settings.language === 'es' ? 'Verificación Instantánea' : 
-               settings.language === 'fr' ? 'Vérification Instantanée' : 
+
+          <div className="feature-item">
+            <div className="feature-title">
+              <span className="material-icons">vibration</span>
+              {settings.language === 'es' ? 'Verificación Instantánea' :
+               settings.language === 'fr' ? 'Vérification Instantanée' :
                'Instant Verification'}
             </div>
-            <div style={{ fontSize: getFontSize(), color: 'var(--color-text-secondary)' }}>
-              {settings.language === 'es' ? 'Confirmación por vibración' : 
-               settings.language === 'fr' ? 'Confirmation par vibration' : 
+            <div className="feature-desc">
+              {settings.language === 'es' ? 'Confirmación por vibración' :
+               settings.language === 'fr' ? 'Confirmation par vibration' :
                'Vibration confirmation'}
             </div>
           </div>
-          
-          <div className="feature-item" style={{ 
-            background: 'var(--color-surface)', 
-            padding: '15px', 
-            borderRadius: '8px', 
-            marginBottom: '10px' 
-          }}>
-            <div style={{ fontWeight: '600', marginBottom: '5px', fontSize: getFontSize() }}>
-              <span className="material-icons" style={{ verticalAlign: 'middle', marginRight: '8px', fontSize: '1.2rem' }}>chat</span>
-              {settings.language === 'es' ? 'Jerga Local' : 
-               settings.language === 'fr' ? 'Argot Local' : 
+
+          <div className="feature-item">
+            <div className="feature-title">
+              <span className="material-icons">chat</span>
+              {settings.language === 'es' ? 'Jerga Local' :
+               settings.language === 'fr' ? 'Argot Local' :
                'Local Slang'}
             </div>
-            <div style={{ fontSize: getFontSize(), color: 'var(--color-text-secondary)' }}>
-              {settings.language === 'es' ? 'Traduce expresiones mexicanas' : 
-               settings.language === 'fr' ? 'Traduit les expressions mexicaines' : 
+            <div className="feature-desc">
+              {settings.language === 'es' ? 'Traduce expresiones mexicanas' :
+               settings.language === 'fr' ? 'Traduit les expressions mexicaines' :
                'Translates Mexican expressions'}
             </div>
           </div>

@@ -1,4 +1,5 @@
 import { MapCategory, MapPoint, UserLocation } from '../types';
+import { predefinedPOIs, findNearestCity, getPOIsByCity } from '../data/predefinedPOIs';
 
 const OVERPASS_API_URL = 'https://overpass-api.de/api/interpreter';
 const RADIUS_METERS = 3000;
@@ -6,7 +7,6 @@ const RADIUS_METERS = 3000;
 const categoryIcons: Record<MapCategory, string> = {
   comida: 'restaurant',
   diversion: 'local_activity',
-  estadio: 'stadium',
   estadios: 'stadium',
   transporte: 'directions_transit',
   todos: 'place'
@@ -15,7 +15,6 @@ const categoryIcons: Record<MapCategory, string> = {
 const categoryNames: Record<MapCategory, string> = {
   comida: 'Restaurantes y Comida',
   diversion: 'Diversión y Entretenimiento',
-  estadio: 'Estadios',
   estadios: 'Estadios',
   transporte: 'Transporte Público',
   todos: 'Todos'
@@ -46,17 +45,6 @@ function getCategoryQuery(category: MapCategory, lat: number, lng: number): stri
         node["leisure"="playground"](around:${RADIUS_METERS},${lat},${lng});
         node["amenity"="theatre"](around:${RADIUS_METERS},${lat},${lng});
         node["amenity"="nightclub"](around:${RADIUS_METERS},${lat},${lng});
-      );
-      out body;
-    `,
-    estadio: `
-      [out:json][timeout:25];
-      (
-        node["leisure"="stadium"](around:${RADIUS_METERS},${lat},${lng});
-        way["leisure"="stadium"](around:${RADIUS_METERS},${lat},${lng});
-        node["building"="stadium"](around:${RADIUS_METERS},${lat},${lng});
-        node["building"="sports_centre"](around:${RADIUS_METERS},${lat},${lng});
-        node["leisure"="sports_centre"](around:${RADIUS_METERS},${lat},${lng});
       );
       out body;
     `,
@@ -139,7 +127,7 @@ function formatDistance(meters: number): string {
   return (meters / 1000).toFixed(1) + 'km';
 }
 
-export default class MapService {
+class MapService {
   private cachedLocation: UserLocation | null = null;
 
   async getUserLocation(): Promise<UserLocation> {
@@ -236,7 +224,6 @@ export default class MapService {
     const results: Record<MapCategory, MapPoint[]> = {
       comida: [],
       diversion: [],
-      estadio: [],
       estadios: [],
       transporte: [],
       todos: []
@@ -260,4 +247,62 @@ export default class MapService {
   formatDistance(meters: number): string {
     return formatDistance(meters);
   }
+
+  getPredefinedPOIs(userLat: number, userLng: number, category?: MapCategory): MapPoint[] {
+    const nearest = findNearestCity(userLat, userLng);
+    
+    if (nearest) {
+      const cityPoints = nearest.city.points;
+      if (!category || category === 'todos') {
+        return cityPoints.map(p => ({
+          ...p,
+          distance: calculateDistance(userLat, userLng, p.lat, p.lng)
+        }));
+      }
+      return cityPoints
+        .filter(p => p.category === category)
+        .map(p => ({
+          ...p,
+          distance: calculateDistance(userLat, userLng, p.lat, p.lng)
+        }));
+    }
+    
+    const allPOIs = getPOIsByCity('');
+    if (!allPOIs) {
+      return [];
+    }
+    
+    if (!category || category === 'todos') {
+      return allPOIs.map(p => ({
+        ...p,
+        distance: calculateDistance(userLat, userLng, p.lat, p.lng)
+      }));
+    }
+    
+    return allPOIs
+      .filter(p => p.category === category)
+      .map(p => ({
+        ...p,
+        distance: calculateDistance(userLat, userLng, p.lat, p.lng)
+      }));
+  }
+
+  async getCombinedPOIs(userLat: number, userLng: number, category: MapCategory): Promise<MapPoint[]> {
+    const predefined = this.getPredefinedPOIs(userLat, userLng, category);
+    const osm = await this.getPointsOfInterest(category, userLat, userLng);
+    
+    const combined = [...predefined];
+    const existingIds = new Set(predefined.map(p => p.id));
+    
+    for (const poi of osm) {
+      if (!existingIds.has(poi.id)) {
+        combined.push(poi);
+      }
+    }
+    
+    return combined.sort((a, b) => (a.distance || 0) - (b.distance || 0)).slice(0, 50);
+  }
 }
+
+const mapService = new MapService();
+export default mapService;
