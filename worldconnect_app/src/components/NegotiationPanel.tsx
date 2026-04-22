@@ -74,6 +74,13 @@ const NegotiationPanel: React.FC<NegotiationPanelProps> = ({ settings }) => {
     }
   };
 
+  useEffect(() => {
+    if (selectedItem) {
+      generateNegotiationMessage('offer');
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedItem, currentPrice]);
+
   const handleItemSelect = (item: typeof commonItems[0]) => {
     setSelectedItem(item.id);
     setCurrentPrice(item.basePrice);
@@ -123,16 +130,6 @@ const NegotiationPanel: React.FC<NegotiationPanelProps> = ({ settings }) => {
     setCurrentPrice(suggestedPrice);
     generateNegotiationMessage('counter');
   };
-
-  const getCurrentItem = () => {
-    return commonItems.find(item => item.id === selectedItem);
-  };
-
-  useEffect(() => {
-    if (selectedItem) {
-      generateNegotiationMessage('offer');
-    }
-  }, [selectedItem, currentPrice]);
 
   return (
     <div className="negotiation-panel">

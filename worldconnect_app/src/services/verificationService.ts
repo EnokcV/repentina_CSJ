@@ -176,4 +176,6 @@ class VerificationService {
   }
 }
 
-export default new VerificationService();
+// eslint-disable-next-line import/no-anonymous-default-export
+const verificationService = new VerificationService();
+export default verificationService;

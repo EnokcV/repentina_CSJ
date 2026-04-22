@@ -1,5 +1,7 @@
 # ⚽ WorldConnect - Traductor Instantáneo para el Mundial 2026
 
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?name=worldconnect&repository-url=github.com/EnokcV/repentina_CSJ&buildCommand=npm%20run%20build&outputDirectory=build)
+
 Una aplicación React de traducción multiidioma para eventos internacionales, diseñada para funcionar **100% offline** en entornos con alta contaminación acústica y saturación de red.
 
 ## 🎯 Características Principales

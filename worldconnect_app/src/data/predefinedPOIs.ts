@@ -1,4 +1,4 @@
-import { MapPoint, MapCategory } from '../types';
+import { MapPoint } from '../types';
 
 export interface CountryPOIs {
   country: string;

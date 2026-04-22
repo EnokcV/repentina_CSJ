@@ -122,6 +122,7 @@ const MapPanel: React.FC<MapPanelProps> = ({ settings }) => {
 
   useEffect(() => {
     loadUserLocation();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const defaultCenter: [number, number] = userLocation 

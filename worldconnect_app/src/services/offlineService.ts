@@ -166,4 +166,5 @@ class OfflineService {
   }
 }
 
-export default new OfflineService();
+const offlineService = new OfflineService();
+export default offlineService;

@@ -10,7 +10,6 @@ interface EmergencyPanelProps {
 const EmergencyPanel: React.FC<EmergencyPanelProps> = ({ settings }) => {
   const [selectedEmergency, setSelectedEmergency] = useState<string>('');
   const [translatedMessage, setTranslatedMessage] = useState<string>('');
-  const [isFlashing, setIsFlashing] = useState(false);
 
   const emergencyCategories = [
     {
@@ -65,14 +64,6 @@ const EmergencyPanel: React.FC<EmergencyPanelProps> = ({ settings }) => {
     }
   };
 
-  const getLargeFontSize = () => {
-    switch (settings.fontSize) {
-      case 'small': return '1.4rem';
-      case 'large': return '2.5rem';
-      default: return '2rem';
-    }
-  };
-
   const handleEmergencySelect = (category: string, phrase: string) => {
     setSelectedEmergency(category);
     const targetLang = getTargetLanguage();
@@ -87,8 +78,7 @@ const EmergencyPanel: React.FC<EmergencyPanelProps> = ({ settings }) => {
   };
 
   const startFlashing = () => {
-    setIsFlashing(true);
-    setTimeout(() => setIsFlashing(false), 5000);
+    setTimeout(() => {}, 5000);
   };
 
   const handleShowCard = (message: string) => {
@@ -118,6 +108,7 @@ const EmergencyPanel: React.FC<EmergencyPanelProps> = ({ settings }) => {
         handleEmergencySelect(selectedEmergency, message);
       }
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedEmergency]);
 
   return (
@@ -278,7 +269,6 @@ const EmergencyPanel: React.FC<EmergencyPanelProps> = ({ settings }) => {
               onClick={() => {
                 setTranslatedMessage('');
                 setSelectedEmergency('');
-                setIsFlashing(false);
               }}
               className="btn btn-ghost"
               style={{ background: 'var(--color-text-muted)', color: 'white' }}
