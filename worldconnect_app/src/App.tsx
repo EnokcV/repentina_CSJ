@@ -5,18 +5,20 @@ import TranslationPanel from './components/TranslationPanel';
 import EmergencyPanel from './components/EmergencyPanel';
 import NegotiationPanel from './components/NegotiationPanel';
 import SettingsPanel from './components/SettingsPanel';
+import MapPanel from './components/MapPanel';
 import { AppSettings } from './types';
 
 const navItems = [
   { id: 'home', icon: 'home', labelKey: 'home' },
   { id: 'translate', icon: 'translate', labelKey: 'translate' },
+  { id: 'map', icon: 'map', labelKey: 'map' },
   { id: 'emergency', icon: 'warning', labelKey: 'emergency' },
   { id: 'negotiate', icon: 'attach_money', labelKey: 'negotiate' },
   { id: 'settings', icon: 'settings', labelKey: 'settings' },
 ] as const;
 
 function App() {
-  const [currentView, setCurrentView] = useState<'home' | 'translate' | 'emergency' | 'negotiate' | 'settings'>('home');
+  const [currentView, setCurrentView] = useState<'home' | 'translate' | 'map' | 'emergency' | 'negotiate' | 'settings'>('home');
   const [settings, setSettings] = useState<AppSettings>({
     language: 'es',
     soundEnabled: true,
@@ -31,6 +33,7 @@ function App() {
     const labels: Record<string, Record<string, string>> = {
       home: { es: 'Inicio', fr: 'Accueil', en: 'Home' },
       translate: { es: 'Traducir', fr: 'Traduire', en: 'Translate' },
+      map: { es: 'Mapa', fr: 'Carte', en: 'Map' },
       emergency: { es: 'Emergencia', fr: 'Urgence', en: 'Emergency' },
       negotiate: { es: 'Negociar', fr: 'Négocier', en: 'Negotiate' },
       settings: { es: 'Ajustes', fr: 'Paramètres', en: 'Settings' },
@@ -70,6 +73,8 @@ function App() {
     switch (currentView) {
       case 'translate':
         return <TranslationPanel settings={settings} />;
+      case 'map':
+        return <MapPanel settings={settings} />;
       case 'emergency':
         return <EmergencyPanel settings={settings} />;
       case 'negotiate':

@@ -99,3 +99,23 @@ export interface TranslationHistoryItem {
   timestamp: number;
   isFavorite: boolean;
 }
+
+export type MapCategory = 'comida' | 'diversion' | 'estadios' | 'transporte' | 'todos';
+
+export interface MapPoint {
+  id: string;
+  name: string;
+  category: MapCategory;
+  lat: number;
+  lng: number;
+  address: string;
+  distance?: number;
+  icon?: string;
+}
+
+export interface UserLocation {
+  lat: number;
+  lng: number;
+  accuracy?: number;
+  timestamp?: number;
+}

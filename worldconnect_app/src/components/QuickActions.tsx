@@ -2,7 +2,7 @@ import React from 'react';
 import { AppSettings } from '../types';
 
 interface QuickActionsProps {
-  setCurrentView: (view: 'home' | 'translate' | 'emergency' | 'negotiate' | 'settings') => void;
+  setCurrentView: (view: 'home' | 'translate' | 'emergency' | 'negotiate' | 'settings' | 'map') => void;
   settings: AppSettings;
 }
 
@@ -23,18 +23,18 @@ const QuickActions: React.FC<QuickActionsProps> = ({ setCurrentView, settings })
       action: () => setCurrentView('translate')
     },
     {
-      id: 'transport',
-      icon: 'directions_car',
-      text: settings.language === 'es' ? 'Transporte' : settings.language === 'fr' ? 'Transport' : 'Transport',
+      id: 'map',
+      icon: 'map',
+      text: settings.language === 'es' ? 'Mapa' : settings.language === 'fr' ? 'Carte' : 'Map',
       color: 'primary',
-      action: () => setCurrentView('translate')
+      action: () => setCurrentView('map')
     },
     {
       id: 'food',
       icon: 'restaurant',
       text: settings.language === 'es' ? 'Comida' : settings.language === 'fr' ? 'Nourriture' : 'Food',
       color: 'primary',
-      action: () => setCurrentView('translate')
+      action: () => setCurrentView('map')
     },
     {
       id: 'football',
