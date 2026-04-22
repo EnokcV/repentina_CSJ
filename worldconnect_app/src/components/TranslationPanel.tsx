@@ -19,8 +19,10 @@ const TranslationPanel: React.FC<TranslationPanelProps> = ({ settings }) => {
   const [showSearch, setShowSearch] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
+  const [isTranslating, setIsTranslating] = useState(false);
   const [listeningError, setListeningError] = useState('');
   const [interimTranscript, setInterimTranscript] = useState('');
+  const [speakingSource, setSpeakingSource] = useState<'original' | 'translated' | null>(null);
 
   useEffect(() => {
     if (settings.language === 'es') {
@@ -35,14 +37,21 @@ const TranslationPanel: React.FC<TranslationPanelProps> = ({ settings }) => {
     }
   }, [settings.language]);
 
-  const handleTranslate = () => {
+  const handleTranslate = async () => {
     if (!inputText.trim()) return;
 
-    const translated = translationService.translate(inputText, fromLang, toLang);
-    setTranslatedText(translated);
-    
-    if (settings.vibrationEnabled) {
-      verificationService.signalMessageReceived();
+    setIsTranslating(true);
+    try {
+      const translated = await translationService.translate(inputText, fromLang, toLang);
+      setTranslatedText(translated);
+      
+      if (settings.vibrationEnabled) {
+        verificationService.signalMessageReceived();
+      }
+    } catch (error) {
+      console.error('Translation error:', error);
+    } finally {
+      setIsTranslating(false);
     }
   };
 
@@ -52,13 +61,20 @@ const TranslationPanel: React.FC<TranslationPanelProps> = ({ settings }) => {
     setIsVerifying(false);
   };
 
-  const handleQuickPhrase = (phrase: string) => {
+  const handleQuickPhrase = async (phrase: string) => {
     setInputText(phrase);
-    const translated = translationService.translate(phrase, fromLang, toLang);
-    setTranslatedText(translated);
-    
-    if (settings.vibrationEnabled) {
-      verificationService.signalMessageReceived();
+    setIsTranslating(true);
+    try {
+      const translated = await translationService.translate(phrase, fromLang, toLang);
+      setTranslatedText(translated);
+      
+      if (settings.vibrationEnabled) {
+        verificationService.signalMessageReceived();
+      }
+    } catch (error) {
+      console.error('Translation error:', error);
+    } finally {
+      setIsTranslating(false);
     }
   };
 
@@ -114,9 +130,7 @@ const TranslationPanel: React.FC<TranslationPanelProps> = ({ settings }) => {
           setInputText(full.trim());
           setInterimTranscript('');
           
-          // Traducir automáticamente
-          const translated = translationService.translate(full.trim(), fromLang, toLang);
-          setTranslatedText(translated);
+          handleTranslateFromInput(full.trim());
         } else {
           setInterimTranscript(text);
         }
@@ -129,7 +143,21 @@ const TranslationPanel: React.FC<TranslationPanelProps> = ({ settings }) => {
     setIsListening(false);
   };
 
-  const handleSpeak = async () => {
+  const handleTranslateFromInput = async (text: string) => {
+    if (!text.trim()) return;
+    
+    setIsTranslating(true);
+    try {
+      const translated = await translationService.translate(text, fromLang, toLang);
+      setTranslatedText(translated);
+    } catch (error) {
+      console.error('Translation error:', error);
+    } finally {
+      setIsTranslating(false);
+    }
+  };
+
+  const speakText = async (text: string, lang: string, source: 'original' | 'translated') => {
     if (!audioService.supportsSynthesis()) {
       alert('Speech Synthesis not supported');
       return;
@@ -138,26 +166,30 @@ const TranslationPanel: React.FC<TranslationPanelProps> = ({ settings }) => {
     if (isSpeaking) {
       audioService.stopSpeaking();
       setIsSpeaking(false);
+      setSpeakingSource(null);
       return;
     }
 
-    if (!translatedText) {
-      alert('No translation to speak');
+    if (!text) {
+      alert('No text to speak');
       return;
     }
 
     try {
       setIsSpeaking(true);
-      await audioService.speak(translatedText, {
-        language: toLang,
+      setSpeakingSource(source);
+      await audioService.speak(text, {
+        language: lang,
         rate: 0.9,
         pitch: 1,
         volume: 1
       });
       setIsSpeaking(false);
+      setSpeakingSource(null);
     } catch (error) {
       console.error('Error speaking:', error);
       setIsSpeaking(false);
+      setSpeakingSource(null);
     }
   };
 
@@ -224,6 +256,35 @@ const TranslationPanel: React.FC<TranslationPanelProps> = ({ settings }) => {
       </div>
 
       <div className="translation-input" style={{ marginBottom: '20px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' }}>
+          <span style={{ fontSize: getFontSize(), color: 'var(--color-text-secondary)' }}>
+            {settings.language === 'es' ? 'Tu mensaje:' : 
+             settings.language === 'fr' ? 'Ton message:' : 
+             'Your message:'}
+          </span>
+          <button
+            onClick={isListening ? stopListening : startListening}
+            className={`btn ${isListening ? 'btn-danger' : 'btn-secondary'} btn-sm`}
+            style={{ 
+              borderRadius: '50%',
+              width: '40px',
+              height: '40px',
+              padding: '0',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}
+            title={isListening ? 'Stop listening' : 'Voice input'}
+          >
+            <span className="material-icons" style={{ 
+              animation: isListening ? 'pulse 1s infinite' : 'none',
+              color: isListening ? 'white' : 'inherit'
+            }}>
+              {isListening ? 'stop' : 'mic'}
+            </span>
+          </button>
+        </div>
+        
         <textarea
           value={inputText}
           onChange={(e) => {
@@ -243,6 +304,27 @@ const TranslationPanel: React.FC<TranslationPanelProps> = ({ settings }) => {
             resize: 'vertical'
           }}
         />
+        
+        {interimTranscript && (
+          <div style={{ 
+            color: '#888', 
+            fontStyle: 'italic',
+            marginTop: '5px',
+            fontSize: getFontSize()
+          }}>
+            {interimTranscript}
+          </div>
+        )}
+
+        {listeningError && (
+          <div style={{ 
+            color: '#dc3545', 
+            marginTop: '5px',
+            fontSize: getFontSize()
+          }}>
+            {listeningError}
+          </div>
+        )}
         
         {showSearch && searchResults.length > 0 && (
           <div className="search-results" style={{
@@ -280,10 +362,13 @@ const TranslationPanel: React.FC<TranslationPanelProps> = ({ settings }) => {
       <div className="translation-actions">
         <button
           onClick={handleTranslate}
+          disabled={isTranslating || !inputText.trim()}
           className="btn btn-primary btn-lg"
           style={{ fontSize: getFontSize() }}
         >
-          <span className="material-icons">translate</span>
+          <span className="material-icons">
+            {isTranslating ? 'hourglass_empty' : 'translate'}
+          </span>
           {settings.language === 'es' ? 'Traducir' : 
            settings.language === 'fr' ? 'Traduire' : 
            'Translate'}
@@ -308,12 +393,69 @@ const TranslationPanel: React.FC<TranslationPanelProps> = ({ settings }) => {
 
       {translatedText && (
         <div className={`translation-card ${isVerifying ? 'verified' : ''}`} style={{ marginBottom: '20px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
+            <span style={{ fontSize: getFontSize(), color: 'var(--color-text-secondary)' }}>
+              {settings.language === 'es' ? 'Traducción:' : 
+               settings.language === 'fr' ? 'Traduction:' : 
+               'Translation:'}
+            </span>
+            <button
+              onClick={() => speakText(inputText, fromLang, 'original')}
+              className={`btn ${speakingSource === 'original' ? 'btn-primary' : 'btn-secondary'} btn-sm`}
+              style={{ 
+                borderRadius: '50%',
+                width: '36px',
+                height: '36px',
+                padding: '0',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}
+              title="Listen to original"
+            >
+              <span className="material-icons" style={{ 
+                animation: speakingSource === 'original' && isSpeaking ? 'pulse 1s infinite' : 'none'
+              }}>
+                {speakingSource === 'original' && isSpeaking ? 'stop' : 'volume_up'}
+              </span>
+            </button>
+          </div>
+          
           <div className="original-text" style={{ fontSize: getFontSize() }}>
             {inputText}
           </div>
           
-          <div className="translated-text" style={{ fontSize: getLargeFontSize() }}>
-            {translatedText}
+          <div style={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'space-between',
+            marginTop: '15px',
+            marginBottom: '10px'
+          }}>
+            <span style={{ fontSize: getLargeFontSize(), fontWeight: 'bold' }}>
+              {translatedText}
+            </span>
+            <button
+              onClick={() => speakText(translatedText, toLang, 'translated')}
+              className={`btn ${speakingSource === 'translated' ? 'btn-primary' : 'btn-secondary'} btn-sm`}
+              style={{ 
+                borderRadius: '50%',
+                width: '40px',
+                height: '40px',
+                padding: '0',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}
+              title="Listen to translation"
+            >
+              <span className="material-icons" style={{ 
+                animation: speakingSource === 'translated' && isSpeaking ? 'pulse 1s infinite' : 'none',
+                color: speakingSource === 'translated' ? 'white' : 'inherit'
+              }}>
+                {speakingSource === 'translated' && isSpeaking ? 'stop' : 'volume_up'}
+              </span>
+            </button>
           </div>
           
           <div className="verification-actions">

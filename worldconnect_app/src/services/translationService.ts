@@ -313,18 +313,89 @@ const translationDictionary: Record<string, Record<string, Record<string, string
   }
 };
 
+const MYMEMORY_API_URL = 'https://api.mymemory.translated.net/get';
+
+const CACHE_PREFIX = 'translation_cache_';
+const CACHE_DURATION = 60 * 60 * 1000;
+
+function getCacheKey(text: string, from: string, to: string): string {
+  return CACHE_PREFIX + from + '_' + to + '_' + text.toLowerCase().replace(/\s+/g, '_');
+}
+
+function getFromCache(text: string, from: string, to: string): string | null {
+  try {
+    const key = getCacheKey(text, from, to);
+    const cached = localStorage.getItem(key);
+    if (cached) {
+      const data = JSON.parse(cached);
+      if (Date.now() - data.timestamp < CACHE_DURATION) {
+        return data.translation;
+      }
+      localStorage.removeItem(key);
+    }
+  } catch {}
+  return null;
+}
+
+function setCache(text: string, from: string, to: string, translation: string): void {
+  try {
+    const key = getCacheKey(text, from, to);
+    localStorage.setItem(key, JSON.stringify({
+      translation,
+      timestamp: Date.now()
+    }));
+  } catch {}
+}
+
+async function translateWithAPI(text: string, fromLang: string, toLang: string): Promise<string | null> {
+  const cache = getFromCache(text, fromLang, toLang);
+  if (cache) return cache;
+
+  const langPair = `${fromLang}|${toLang}`;
+  const url = `${MYMEMORY_API_URL}?q=${encodeURIComponent(text)}&langpair=${langPair}`;
+
+  try {
+    const response = await fetch(url);
+    if (!response.ok) return null;
+
+    const data = await response.json();
+    if (data.responseStatus === 200 && data.responseData?.translatedText) {
+      const translation = data.responseData.translatedText;
+      setCache(text, fromLang, toLang, translation);
+      return translation;
+    }
+  } catch (error) {
+    console.warn('MyMemory API error:', error);
+  }
+
+  return null;
+}
+
 class TranslationService {
   /**
-   * Traducir texto de un idioma a otro
+   * Traducir texto de un idioma a otro usando API real + fallback local
    */
-  translate(text: string, fromLang: string, toLang: string): string {
+  async translate(text: string, fromLang: string, toLang: string): Promise<string> {
+    if (!text || !fromLang || !toLang) return text;
+
+    const textTrimmed = text.trim();
+    
+    const apiResult = await translateWithAPI(textTrimmed, fromLang, toLang);
+    if (apiResult) return apiResult;
+
+    return this.translateLocal(textTrimmed, fromLang, toLang);
+  }
+
+  /**
+   * Fallback: traducción local con diccionario
+   */
+  translateLocal(text: string, fromLang: string, toLang: string): string {
     if (!text || !fromLang || !toLang) return text;
 
     const textLower = text.toLowerCase().trim();
     const sourceLang = fromLang as keyof typeof translationDictionary;
     const targetLang = toLang;
 
-    // Buscar traducción exacta
     if (translationDictionary[sourceLang]) {
       const langPair = translationDictionary[sourceLang][targetLang];
       if (langPair && langPair[textLower]) {
@@ -332,7 +403,6 @@ class TranslationService {
       }
     }
 
-    // Buscar palabras individuales
     const words = textLower.split(/\s+/);
     const translatedWords = words.map(word => {
       if (translationDictionary[sourceLang]?.[targetLang]?.[word]) {
