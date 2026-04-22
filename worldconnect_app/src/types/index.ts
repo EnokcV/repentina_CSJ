@@ -41,6 +41,7 @@ export interface AppSettings {
   ecoMode: boolean;
   fontSize: 'small' | 'medium' | 'large';
   themeMode: 'light' | 'dark' | 'system';
+  openrouterApiKey?: string;
 }
 
 export type ThemeMode = 'light' | 'dark' | 'system';
