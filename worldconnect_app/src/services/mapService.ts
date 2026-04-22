@@ -1,5 +1,5 @@
 import { MapCategory, MapPoint, UserLocation } from '../types';
-import { predefinedPOIs, findNearestCity, getPOIsByCity } from '../data/predefinedPOIs';
+import { findNearestCity, getPOIsByCity } from '../data/predefinedPOIs';
 
 const OVERPASS_API_URL = 'https://overpass-api.de/api/interpreter';
 const RADIUS_METERS = 3000;
