@@ -10,7 +10,7 @@ const QuickActions: React.FC<QuickActionsProps> = ({ setCurrentView, settings })
   const quickActions = [
     {
       id: 'emergency',
-      icon: 'help',
+      icon: 'emergency',
       text: settings.language === 'es' ? 'Ayuda' : settings.language === 'fr' ? 'Aide' : 'Help',
       color: 'emergency',
       action: () => setCurrentView('emergency')
@@ -24,7 +24,7 @@ const QuickActions: React.FC<QuickActionsProps> = ({ setCurrentView, settings })
     },
     {
       id: 'transport',
-      icon: 'directions',
+      icon: 'directions_car',
       text: settings.language === 'es' ? 'Transporte' : settings.language === 'fr' ? 'Transport' : 'Transport',
       color: 'primary',
       action: () => setCurrentView('translate')
@@ -70,7 +70,7 @@ const QuickActions: React.FC<QuickActionsProps> = ({ setCurrentView, settings })
 
   return (
     <div className="quick-actions">
-      <h2 style={{ fontSize: getFontSize(), textAlign: 'center', marginBottom: '20px' }}>
+      <h2 style={{ fontSize: getFontSize(), textAlign: 'center', marginBottom: '20px', fontWeight: '700', color: 'var(--color-text)' }}>
         {settings.language === 'es' ? 'Accesos Rápidos' : 
          settings.language === 'fr' ? 'Accès Rapides' : 
          'Quick Actions'}
@@ -85,12 +85,7 @@ const QuickActions: React.FC<QuickActionsProps> = ({ setCurrentView, settings })
             style={{ fontSize: getFontSize() }}
           >
             <div className="icon-large" style={{ fontSize: getIconSize() }}>
-              {action.icon === 'help' && 'help'}
-              {action.icon === 'translate' && 'translate'}
-              {action.icon === 'directions' && 'directions'}
-              {action.icon === 'restaurant' && 'restaurant'}
-              {action.icon === 'sports_soccer' && 'sports_soccer'}
-              {action.icon === 'attach_money' && 'attach_money'}
+              <span className="material-icons">{action.icon}</span>
             </div>
             <div className="text-large">{action.text}</div>
           </button>
@@ -98,7 +93,7 @@ const QuickActions: React.FC<QuickActionsProps> = ({ setCurrentView, settings })
       </div>
 
       <div className="feature-highlights" style={{ marginTop: '30px' }}>
-        <h3 style={{ fontSize: getFontSize(), textAlign: 'center', marginBottom: '15px' }}>
+        <h3 style={{ fontSize: getFontSize(), textAlign: 'center', marginBottom: '15px', fontWeight: '600', color: 'var(--color-text-secondary)' }}>
           {settings.language === 'es' ? 'Características Principales' : 
            settings.language === 'fr' ? 'Caractéristiques Principales' : 
            'Key Features'}
@@ -106,17 +101,18 @@ const QuickActions: React.FC<QuickActionsProps> = ({ setCurrentView, settings })
         
         <div className="feature-list">
           <div className="feature-item" style={{ 
-            background: '#f5f5f5', 
+            background: 'var(--color-surface)', 
             padding: '15px', 
             borderRadius: '8px', 
             marginBottom: '10px' 
           }}>
             <div style={{ fontWeight: '600', marginBottom: '5px', fontSize: getFontSize() }}>
+              <span className="material-icons" style={{ verticalAlign: 'middle', marginRight: '8px', fontSize: '1.2rem' }}>wifi_off</span>
               {settings.language === 'es' ? 'Modo Offline' : 
                settings.language === 'fr' ? 'Mode Hors Ligne' : 
                'Offline Mode'}
             </div>
-            <div style={{ fontSize: getFontSize() }}>
+            <div style={{ fontSize: getFontSize(), color: 'var(--color-text-secondary)' }}>
               {settings.language === 'es' ? 'Funciona sin internet' : 
                settings.language === 'fr' ? 'Fonctionne sans internet' : 
                'Works without internet'}
@@ -124,17 +120,18 @@ const QuickActions: React.FC<QuickActionsProps> = ({ setCurrentView, settings })
           </div>
           
           <div className="feature-item" style={{ 
-            background: '#f5f5f5', 
+            background: 'var(--color-surface)', 
             padding: '15px', 
             borderRadius: '8px', 
             marginBottom: '10px' 
           }}>
             <div style={{ fontWeight: '600', marginBottom: '5px', fontSize: getFontSize() }}>
+              <span className="material-icons" style={{ verticalAlign: 'middle', marginRight: '8px', fontSize: '1.2rem' }}>vibration</span>
               {settings.language === 'es' ? 'Verificación Instantánea' : 
                settings.language === 'fr' ? 'Vérification Instantanée' : 
                'Instant Verification'}
             </div>
-            <div style={{ fontSize: getFontSize() }}>
+            <div style={{ fontSize: getFontSize(), color: 'var(--color-text-secondary)' }}>
               {settings.language === 'es' ? 'Confirmación por vibración' : 
                settings.language === 'fr' ? 'Confirmation par vibration' : 
                'Vibration confirmation'}
@@ -142,17 +139,18 @@ const QuickActions: React.FC<QuickActionsProps> = ({ setCurrentView, settings })
           </div>
           
           <div className="feature-item" style={{ 
-            background: '#f5f5f5', 
+            background: 'var(--color-surface)', 
             padding: '15px', 
             borderRadius: '8px', 
             marginBottom: '10px' 
           }}>
             <div style={{ fontWeight: '600', marginBottom: '5px', fontSize: getFontSize() }}>
+              <span className="material-icons" style={{ verticalAlign: 'middle', marginRight: '8px', fontSize: '1.2rem' }}>chat</span>
               {settings.language === 'es' ? 'Jerga Local' : 
                settings.language === 'fr' ? 'Argot Local' : 
                'Local Slang'}
             </div>
-            <div style={{ fontSize: getFontSize() }}>
+            <div style={{ fontSize: getFontSize(), color: 'var(--color-text-secondary)' }}>
               {settings.language === 'es' ? 'Traduce expresiones mexicanas' : 
                settings.language === 'fr' ? 'Traduit les expressions mexicaines' : 
                'Translates Mexican expressions'}

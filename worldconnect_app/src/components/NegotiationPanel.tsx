@@ -149,35 +149,23 @@ const NegotiationPanel: React.FC<NegotiationPanelProps> = ({ settings }) => {
            'Select item or service'}
         </h3>
         
-        <div className="items-grid" style={{ 
-          display: 'grid', 
-          gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
-          gap: '15px'
-        }}>
+        <div className="items-grid">
           {commonItems.map((item) => (
             <button
               key={item.id}
               onClick={() => handleItemSelect(item)}
-              style={{
-                background: selectedItem === item.id ? '#2196F3' : 'white',
-                color: selectedItem === item.id ? 'white' : '#333',
-                border: `2px solid ${selectedItem === item.id ? '#2196F3' : '#ddd'}`,
-                padding: '20px',
-                borderRadius: '12px',
-                cursor: 'pointer',
-                fontSize: getFontSize(),
-                fontWeight: '600',
-                textAlign: 'center'
-              }}
+              className={`item-card ${selectedItem === item.id ? 'selected' : ''}`}
             >
-              <div style={{ fontSize: '2rem', marginBottom: '10px' }}>
-                {item.id === 'taxi' && 'local_taxi'}
-                {item.id === 'food' && 'restaurant'}
-                {item.id === 'souvenir' && 'card_giftcard'}
-                {item.id === 'tour' && 'tour'}
-                {item.id === 'hotel' && 'hotel'}
+              <div className="item-icon">
+                <span className="material-icons">
+                  {item.id === 'taxi' && 'local_taxi'}
+                  {item.id === 'food' && 'restaurant'}
+                  {item.id === 'souvenir' && 'card_giftcard'}
+                  {item.id === 'tour' && 'tour'}
+                  {item.id === 'hotel' && 'hotel'}
+                </span>
               </div>
-              <div>{item[settings.language]}</div>
+              <div style={{ fontWeight: '600' }}>{item[settings.language]}</div>
               <div style={{ fontSize: '0.9rem', marginTop: '5px', opacity: 0.8 }}>
                 ${item.basePrice}
               </div>
@@ -203,30 +191,12 @@ const NegotiationPanel: React.FC<NegotiationPanelProps> = ({ settings }) => {
             ${currentPrice}
           </div>
 
-          <div className="price-controls" style={{ 
-            display: 'flex', 
-            justifyContent: 'center', 
-            alignItems: 'center',
-            gap: '30px',
-            marginBottom: '30px'
-          }}>
+          <div className="price-controls">
             <button
               onClick={() => adjustPrice(-10)}
-              style={{
-                background: '#f44336',
-                color: 'white',
-                border: 'none',
-                borderRadius: '50%',
-                width: '60px',
-                height: '60px',
-                fontSize: '1.5rem',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center'
-              }}
+              className="price-btn decrease"
             >
-              remove
+              <span className="material-icons">remove</span>
             </button>
             
             <div style={{ fontSize: getFontSize(), fontWeight: '600' }}>
@@ -237,32 +207,14 @@ const NegotiationPanel: React.FC<NegotiationPanelProps> = ({ settings }) => {
             
             <button
               onClick={() => adjustPrice(10)}
-              style={{
-                background: '#4CAF50',
-                color: 'white',
-                border: 'none',
-                borderRadius: '50%',
-                width: '60px',
-                height: '60px',
-                fontSize: '1.5rem',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center'
-              }}
+              className="price-btn increase"
             >
-              add
+              <span className="material-icons">add</span>
             </button>
           </div>
 
-          <div className="price-range" style={{ 
-            background: '#f5f5f5', 
-            padding: '15px', 
-            borderRadius: '8px',
-            marginBottom: '30px',
-            textAlign: 'center'
-          }}>
-            <div style={{ fontSize: getFontSize(), marginBottom: '10px' }}>
+          <div className="price-range">
+            <div style={{ fontSize: getFontSize(), marginBottom: '10px', color: 'var(--color-text-secondary)' }}>
               {settings.language === 'es' ? 'Rango Sugerido' : 
                settings.language === 'fr' ? 'Gamme Suggérée' : 
                'Suggested Range'}
@@ -272,25 +224,12 @@ const NegotiationPanel: React.FC<NegotiationPanelProps> = ({ settings }) => {
             </div>
           </div>
 
-          <div className="quick-actions" style={{ 
-            display: 'grid', 
-            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-            gap: '15px',
-            marginBottom: '30px'
-          }}>
+          <div className="negotiation-quick-actions">
             <button
               onClick={handleCounter}
-              style={{
-                background: '#FF9800',
-                color: 'white',
-                border: 'none',
-                padding: '15px',
-                borderRadius: '8px',
-                fontSize: getFontSize(),
-                cursor: 'pointer',
-                fontWeight: '600'
-              }}
+              className="btn-offer"
             >
+              <span className="material-icons" style={{ verticalAlign: 'middle', marginRight: '8px' }}>trending_down</span>
               {settings.language === 'es' ? 'Ofrecer Menos' : 
                settings.language === 'fr' ? 'Proposer Moins' : 
                'Offer Less'}
@@ -298,17 +237,9 @@ const NegotiationPanel: React.FC<NegotiationPanelProps> = ({ settings }) => {
             
             <button
               onClick={() => generateNegotiationMessage('tooHigh')}
-              style={{
-                background: '#9C27B0',
-                color: 'white',
-                border: 'none',
-                padding: '15px',
-                borderRadius: '8px',
-                fontSize: getFontSize(),
-                cursor: 'pointer',
-                fontWeight: '600'
-              }}
+              className="btn-expensive"
             >
+              <span className="material-icons" style={{ verticalAlign: 'middle', marginRight: '8px' }}>money_off</span>
               {settings.language === 'es' ? 'Muy Caro' : 
                settings.language === 'fr' ? 'Trop Cher' : 
                'Too Expensive'}
@@ -316,47 +247,30 @@ const NegotiationPanel: React.FC<NegotiationPanelProps> = ({ settings }) => {
           </div>
 
           {translatedMessage && (
-            <div className="translated-message" style={{
-              background: '#E3F2FD',
-              border: '2px solid #2196F3',
-              borderRadius: '12px',
-              padding: '20px',
-              marginBottom: '30px',
-              textAlign: 'center'
-            }}>
-              <div style={{ fontSize: getFontSize(), fontWeight: '600', marginBottom: '10px' }}>
+            <div className="translated-message">
+              <div className="label">
                 {settings.language === 'es' ? 'Mensaje para mostrar:' : 
                  settings.language === 'fr' ? 'Message à afficher:' : 
                  'Message to show:'}
               </div>
-              <div style={{ fontSize: getLargeFontSize(), color: '#2196F3', fontWeight: '700' }}>
+              <div className="text">
                 {translatedMessage}
               </div>
             </div>
           )}
 
-          <div className="action-buttons" style={{ 
-            display: 'flex', 
-            justifyContent: 'center', 
-            gap: '15px'
-          }}>
+          <div className="action-buttons">
             <button
               onClick={handleAccept}
               disabled={isNegotiating}
-              style={{
-                background: agreementStatus === 'accepted' ? '#4CAF50' : '#4CAF50',
-                color: 'white',
-                border: 'none',
-                padding: '15px 30px',
-                fontSize: getFontSize(),
-                borderRadius: '8px',
-                cursor: isNegotiating ? 'not-allowed' : 'pointer',
-                fontWeight: '600',
-                opacity: isNegotiating ? 0.7 : 1
-              }}
+              className="btn btn-secondary btn-lg"
+              style={{ opacity: isNegotiating ? 0.7 : 1 }}
             >
-              {isNegotiating ? '...' : 
-               agreementStatus === 'accepted' ? 
+              {isNegotiating ? 
+                <span className="material-icons" style={{ animation: 'spin 1s linear infinite' }}>sync</span> : 
+                <span className="material-icons">check</span>
+              }
+              {agreementStatus === 'accepted' ? 
                (settings.language === 'es' ? 'Aceptado' : 
                 settings.language === 'fr' ? 'Accepté' : 'Accepted') :
                (settings.language === 'es' ? 'Aceptar' : 
@@ -365,17 +279,9 @@ const NegotiationPanel: React.FC<NegotiationPanelProps> = ({ settings }) => {
             
             <button
               onClick={handleReject}
-              style={{
-                background: agreementStatus === 'rejected' ? '#f44336' : '#f44336',
-                color: 'white',
-                border: 'none',
-                padding: '15px 30px',
-                fontSize: getFontSize(),
-                borderRadius: '8px',
-                cursor: 'pointer',
-                fontWeight: '600'
-              }}
+              className="btn btn-danger btn-lg"
             >
+              <span className="material-icons">close</span>
               {agreementStatus === 'rejected' ? 
                (settings.language === 'es' ? 'Rechazado' : 
                 settings.language === 'fr' ? 'Rejeté' : 'Rejected') :
@@ -385,16 +291,11 @@ const NegotiationPanel: React.FC<NegotiationPanelProps> = ({ settings }) => {
           </div>
 
           {agreementStatus !== 'pending' && (
-            <div className="agreement-status" style={{
-              marginTop: '20px',
-              padding: '15px',
-              borderRadius: '8px',
-              textAlign: 'center',
-              background: agreementStatus === 'accepted' ? '#E8F5E8' : '#FFEBEE',
-              color: agreementStatus === 'accepted' ? '#2E7D32' : '#C62828',
-              fontSize: getFontSize(),
-              fontWeight: '600'
-            }}>
+            <div className={`agreement-status ${agreementStatus}`}>
+              {agreementStatus === 'accepted' ? 
+               <><span className="material-icons" style={{ verticalAlign: 'middle', marginRight: '8px' }}>celebration</span></> :
+               <><span className="material-icons" style={{ verticalAlign: 'middle', marginRight: '8px' }}>cancel</span></>
+              }
               {agreementStatus === 'accepted' ? 
                (settings.language === 'es' ? '¡Acuerdo alcanzado!' : 
                 settings.language === 'fr' ? 'Accord atteint!' : 
@@ -407,31 +308,29 @@ const NegotiationPanel: React.FC<NegotiationPanelProps> = ({ settings }) => {
         </div>
       )}
 
-      <div className="negotiation-tips" style={{
-        background: '#FFF8E1',
-        border: '2px solid #FFC107',
-        borderRadius: '12px',
-        padding: '20px',
-        marginTop: '30px'
-      }}>
-        <h4 style={{ fontSize: getFontSize(), marginBottom: '15px', color: '#FFC107' }}>
+      <div className="negotiation-tips">
+        <h4>
+          <span className="material-icons" style={{ verticalAlign: 'middle', marginRight: '8px', fontSize: '1.2rem' }}>lightbulb</span>
           {settings.language === 'es' ? 'Consejos de Negociación' : 
            settings.language === 'fr' ? 'Conseils de Négociation' : 
            'Negotiation Tips'}
         </h4>
         
-        <ul style={{ fontSize: getFontSize(), paddingLeft: '20px' }}>
-          <li style={{ marginBottom: '10px' }}>
+        <ul>
+          <li>
+            <span className="material-icons" style={{ verticalAlign: 'middle', marginRight: '8px', fontSize: '1rem' }}>smartphone</span>
             {settings.language === 'es' ? 'Muestra el precio en la pantalla' : 
              settings.language === 'fr' ? 'Montrez le prix sur l\'écran' : 
              'Show the price on screen'}
           </li>
-          <li style={{ marginBottom: '10px' }}>
+          <li>
+            <span className="material-icons" style={{ verticalAlign: 'middle', marginRight: '8px', fontSize: '1rem' }}>gesture</span>
             {settings.language === 'es' ? 'Usa gestos para señalar el acuerdo' : 
              settings.language === 'fr' ? 'Utilisez des gestes pour indiquer l\'accord' : 
              'Use gestures to indicate agreement'}
           </li>
-          <li style={{ marginBottom: '10px' }}>
+          <li>
+            <span className="material-icons" style={{ verticalAlign: 'middle', marginRight: '8px', fontSize: '1rem' }}>sentiment_satisfied</span>
             {settings.language === 'es' ? 'Sonríe y mantén contacto visual' : 
              settings.language === 'fr' ? 'Souriez et maintenez le contact visuel' : 
              'Smile and maintain eye contact'}

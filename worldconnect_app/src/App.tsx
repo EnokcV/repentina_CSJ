@@ -7,6 +7,14 @@ import NegotiationPanel from './components/NegotiationPanel';
 import SettingsPanel from './components/SettingsPanel';
 import { AppSettings } from './types';
 
+const navItems = [
+  { id: 'home', icon: 'home', labelKey: 'home' },
+  { id: 'translate', icon: 'translate', labelKey: 'translate' },
+  { id: 'emergency', icon: 'warning', labelKey: 'emergency' },
+  { id: 'negotiate', icon: 'attach_money', labelKey: 'negotiate' },
+  { id: 'settings', icon: 'settings', labelKey: 'settings' },
+] as const;
+
 function App() {
   const [currentView, setCurrentView] = useState<'home' | 'translate' | 'emergency' | 'negotiate' | 'settings'>('home');
   const [settings, setSettings] = useState<AppSettings>({
@@ -14,9 +22,21 @@ function App() {
     soundEnabled: true,
     vibrationEnabled: true,
     ecoMode: false,
-    fontSize: 'medium'
+    fontSize: 'medium',
+    themeMode: 'system'
   });
   const [isSilentMode, setIsSilentMode] = useState(false);
+
+  const getLabel = (key: string) => {
+    const labels: Record<string, Record<string, string>> = {
+      home: { es: 'Inicio', fr: 'Accueil', en: 'Home' },
+      translate: { es: 'Traducir', fr: 'Traduire', en: 'Translate' },
+      emergency: { es: 'Emergencia', fr: 'Urgence', en: 'Emergency' },
+      negotiate: { es: 'Negociar', fr: 'Négocier', en: 'Negotiate' },
+      settings: { es: 'Ajustes', fr: 'Paramètres', en: 'Settings' },
+    };
+    return labels[key]?.[settings.language] || key;
+  };
 
   useEffect(() => {
     const savedSettings = localStorage.getItem('worldconnect_settings');
@@ -36,6 +56,14 @@ function App() {
   useEffect(() => {
     localStorage.setItem('worldconnect_settings', JSON.stringify(settings));
     document.body.className = settings.ecoMode ? 'eco-mode' : '';
+    
+    const applyTheme = () => {
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const isDark = settings.themeMode === 'dark' || 
+        (settings.themeMode === 'system' && prefersDark);
+      document.documentElement.classList.toggle('dark', isDark);
+    };
+    applyTheme();
   }, [settings]);
 
   const renderCurrentView = () => {
@@ -57,12 +85,17 @@ function App() {
     <div className={`app ${settings.ecoMode ? 'eco-mode' : ''}`}>
       {isSilentMode && (
         <div className="silent-mode-indicator">
-          🔕 Modo Silencioso Activado
+          <span className="material-icons">volume_off</span>
+          {settings.language === 'es' ? 'Modo Silencioso' : 
+           settings.language === 'fr' ? 'Mode Silencieux' : 'Silent Mode'}
         </div>
       )}
       
       <header className="header">
-        <h1>⚽ WorldConnect</h1>
+        <h1>
+          <span className="material-icons" style={{ verticalAlign: 'middle', marginRight: '8px' }}>sports_soccer</span>
+          WorldConnect
+        </h1>
         <p>Traducción instantánea para el Mundial</p>
       </header>
 
@@ -71,36 +104,16 @@ function App() {
       </main>
 
       <nav className="bottom-nav">
-        <button 
-          className={`nav-btn ${currentView === 'home' ? 'active' : ''}`}
-          onClick={() => setCurrentView('home')}
-        >
-          🏠
-        </button>
-        <button 
-          className={`nav-btn ${currentView === 'translate' ? 'active' : ''}`}
-          onClick={() => setCurrentView('translate')}
-        >
-          💬
-        </button>
-        <button 
-          className={`nav-btn ${currentView === 'emergency' ? 'active' : ''}`}
-          onClick={() => setCurrentView('emergency')}
-        >
-          🚨
-        </button>
-        <button 
-          className={`nav-btn ${currentView === 'negotiate' ? 'active' : ''}`}
-          onClick={() => setCurrentView('negotiate')}
-        >
-          💰
-        </button>
-        <button 
-          className={`nav-btn ${currentView === 'settings' ? 'active' : ''}`}
-          onClick={() => setCurrentView('settings')}
-        >
-          ⚙️
-        </button>
+        {navItems.map((item) => (
+          <button 
+            key={item.id}
+            className={`nav-btn ${currentView === item.id ? 'active' : ''}`}
+            onClick={() => setCurrentView(item.id as typeof currentView)}
+          >
+            <span className="material-icons">{item.icon}</span>
+            <span className="nav-label">{getLabel(item.labelKey)}</span>
+          </button>
+        ))}
       </nav>
     </div>
   );

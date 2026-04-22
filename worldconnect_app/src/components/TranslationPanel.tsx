@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import offlineService from '../services/offlineService';
 import verificationService from '../services/verificationService';
+import translationService from '../services/translationService';
+import audioService from '../services/audioService';
 import { AppSettings } from '../types';
 
 interface TranslationPanelProps {
@@ -15,6 +17,10 @@ const TranslationPanel: React.FC<TranslationPanelProps> = ({ settings }) => {
   const [isVerifying, setIsVerifying] = useState(false);
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [showSearch, setShowSearch] = useState(false);
+  const [isListening, setIsListening] = useState(false);
+  const [isSpeaking, setIsSpeaking] = useState(false);
+  const [listeningError, setListeningError] = useState('');
+  const [interimTranscript, setInterimTranscript] = useState('');
 
   useEffect(() => {
     if (settings.language === 'es') {
@@ -32,7 +38,7 @@ const TranslationPanel: React.FC<TranslationPanelProps> = ({ settings }) => {
   const handleTranslate = () => {
     if (!inputText.trim()) return;
 
-    const translated = offlineService.translate(inputText, fromLang, toLang);
+    const translated = translationService.translate(inputText, fromLang, toLang);
     setTranslatedText(translated);
     
     if (settings.vibrationEnabled) {
@@ -48,7 +54,7 @@ const TranslationPanel: React.FC<TranslationPanelProps> = ({ settings }) => {
 
   const handleQuickPhrase = (phrase: string) => {
     setInputText(phrase);
-    const translated = offlineService.translate(phrase, fromLang, toLang);
+    const translated = translationService.translate(phrase, fromLang, toLang);
     setTranslatedText(translated);
     
     if (settings.vibrationEnabled) {
@@ -79,6 +85,80 @@ const TranslationPanel: React.FC<TranslationPanelProps> = ({ settings }) => {
     setToLang(fromLang);
     setInputText(translatedText);
     setTranslatedText(inputText);
+  };
+
+  const startListening = () => {
+    if (!audioService.supportsRecognition()) {
+      setListeningError('Speech Recognition not supported');
+      return;
+    }
+
+    setListeningError('');
+    setInterimTranscript('');
+
+    audioService.startListening({
+      language: translationService.getVoiceLanguage(fromLang),
+      onStart: () => {
+        setIsListening(true);
+      },
+      onEnd: () => {
+        setIsListening(false);
+      },
+      onError: (error: string) => {
+        setListeningError(error);
+        setIsListening(false);
+      },
+      onResult: (text: string, isFinal: boolean) => {
+        if (isFinal) {
+          const full = inputText + ' ' + text;
+          setInputText(full.trim());
+          setInterimTranscript('');
+          
+          // Traducir automáticamente
+          const translated = translationService.translate(full.trim(), fromLang, toLang);
+          setTranslatedText(translated);
+        } else {
+          setInterimTranscript(text);
+        }
+      }
+    });
+  };
+
+  const stopListening = () => {
+    audioService.stopListening();
+    setIsListening(false);
+  };
+
+  const handleSpeak = async () => {
+    if (!audioService.supportsSynthesis()) {
+      alert('Speech Synthesis not supported');
+      return;
+    }
+
+    if (isSpeaking) {
+      audioService.stopSpeaking();
+      setIsSpeaking(false);
+      return;
+    }
+
+    if (!translatedText) {
+      alert('No translation to speak');
+      return;
+    }
+
+    try {
+      setIsSpeaking(true);
+      await audioService.speak(translatedText, {
+        language: toLang,
+        rate: 0.9,
+        pitch: 1,
+        volume: 1
+      });
+      setIsSpeaking(false);
+    } catch (error) {
+      console.error('Error speaking:', error);
+      setIsSpeaking(false);
+    }
   };
 
   const quickPhrases = offlineService.getQuickPhrases();
@@ -126,15 +206,10 @@ const TranslationPanel: React.FC<TranslationPanelProps> = ({ settings }) => {
         
         <button 
           onClick={swapLanguages}
-          style={{ 
-            background: 'none', 
-            border: 'none', 
-            fontSize: '1.5rem', 
-            cursor: 'pointer',
-            padding: '5px'
-          }}
+          className="swap-btn"
+          title="Swap languages"
         >
-          swap_horiz
+          <span className="material-icons">swap_horiz</span>
         </button>
         
         <select 
@@ -202,24 +277,13 @@ const TranslationPanel: React.FC<TranslationPanelProps> = ({ settings }) => {
         )}
       </div>
 
-      <div className="translation-actions" style={{ 
-        display: 'flex', 
-        justifyContent: 'center', 
-        marginBottom: '20px',
-        gap: '10px'
-      }}>
+      <div className="translation-actions">
         <button
           onClick={handleTranslate}
-          style={{
-            background: '#2196F3',
-            color: 'white',
-            border: 'none',
-            padding: '12px 24px',
-            fontSize: getFontSize(),
-            borderRadius: '8px',
-            cursor: 'pointer'
-          }}
+          className="btn btn-primary btn-lg"
+          style={{ fontSize: getFontSize() }}
         >
+          <span className="material-icons">translate</span>
           {settings.language === 'es' ? 'Traducir' : 
            settings.language === 'fr' ? 'Traduire' : 
            'Translate'}
@@ -232,16 +296,10 @@ const TranslationPanel: React.FC<TranslationPanelProps> = ({ settings }) => {
             setSearchResults([]);
             setShowSearch(false);
           }}
-          style={{
-            background: '#f44336',
-            color: 'white',
-            border: 'none',
-            padding: '12px 24px',
-            fontSize: getFontSize(),
-            borderRadius: '8px',
-            cursor: 'pointer'
-          }}
+          className="btn btn-danger btn-lg"
+          style={{ fontSize: getFontSize() }}
         >
+          <span className="material-icons">clear</span>
           {settings.language === 'es' ? 'Limpiar' : 
            settings.language === 'fr' ? 'Effacer' : 
            'Clear'}
@@ -258,30 +316,22 @@ const TranslationPanel: React.FC<TranslationPanelProps> = ({ settings }) => {
             {translatedText}
           </div>
           
-          <div className="verification-actions" style={{ 
-            display: 'flex', 
-            justifyContent: 'center', 
-            alignItems: 'center',
-            gap: '10px',
-            marginTop: '15px'
-          }}>
+          <div className="verification-actions">
             <button
               onClick={handleVerify}
               disabled={isVerifying}
+              className="btn btn-secondary"
               style={{
-                background: isVerifying ? '#ccc' : '#4CAF50',
-                color: 'white',
-                border: 'none',
-                padding: '10px 20px',
                 fontSize: getFontSize(),
                 borderRadius: '20px',
                 cursor: isVerifying ? 'not-allowed' : 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '5px'
               }}
             >
-              {isVerifying ? '...' : 'check'} 
+              {isVerifying ? (
+                <span className="material-icons" style={{ animation: 'spin 1s linear infinite' }}>sync</span>
+              ) : (
+                <span className="material-icons">check_circle</span>
+              )}
               {settings.language === 'es' ? ' Verificar' : 
                settings.language === 'fr' ? ' Vérifier' : 
                ' Verify'}
@@ -305,29 +355,18 @@ const TranslationPanel: React.FC<TranslationPanelProps> = ({ settings }) => {
            'Quick Phrases'}
         </h3>
         
-        <div className="quick-phrases-grid" style={{ 
-          display: 'grid', 
-          gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-          gap: '10px'
-        }}>
+        <div className="quick-phrases-grid">
           {quickPhrases.map((phrase) => (
             <button
               key={phrase.id}
               onClick={() => handleQuickPhrase(phrase[fromLang])}
-              style={{
-                background: '#f5f5f5',
-                border: '1px solid #ddd',
-                padding: '15px',
-                borderRadius: '8px',
-                cursor: 'pointer',
-                fontSize: getFontSize(),
-                textAlign: 'left'
-              }}
+              className="phrase-chip"
+              style={{ fontSize: getFontSize() }}
             >
               <div style={{ fontWeight: '600', marginBottom: '5px' }}>
                 {phrase[fromLang]}
               </div>
-              <div style={{ color: '#666', fontSize: getFontSize() }}>
+              <div style={{ color: 'var(--color-text-secondary)', fontSize: getFontSize() }}>
                 {phrase[toLang]}
               </div>
             </button>

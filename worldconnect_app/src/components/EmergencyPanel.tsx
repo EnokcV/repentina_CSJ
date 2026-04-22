@@ -122,16 +122,9 @@ const EmergencyPanel: React.FC<EmergencyPanelProps> = ({ settings }) => {
 
   return (
     <div className="emergency-panel">
-      <div className="emergency-mode" style={{
-        background: isFlashing ? '#f44336' : '#ff5252',
-        color: 'white',
-        padding: '30px',
-        textAlign: 'center',
-        borderRadius: '12px',
-        marginBottom: '20px',
-        animation: isFlashing ? 'pulse 1s infinite' : 'none'
-      }}>
-        <h2 style={{ fontSize: getLargeFontSize(), marginBottom: '10px' }}>
+<div className="emergency-mode">
+        <h2>
+          <span className="material-icons" style={{ verticalAlign: 'middle', marginRight: '8px' }}>emergency</span>
           {settings.language === 'es' ? 'MODO EMERGENCIA' : 
            settings.language === 'fr' ? 'MODE URGENCE' : 
            'EMERGENCY MODE'}
@@ -141,6 +134,40 @@ const EmergencyPanel: React.FC<EmergencyPanelProps> = ({ settings }) => {
            settings.language === 'fr' ? 'Cartes visuels pour communication rapide' : 
            'Visual cards for quick communication'}
         </p>
+      </div>
+
+      <div className="emergency-categories">
+        <h3 style={{ fontSize: getFontSize(), textAlign: 'center', marginBottom: '20px' }}>
+          {settings.language === 'es' ? 'Selecciona tipo de emergencia' : 
+           settings.language === 'fr' ? 'Sélectionnez le type d\'urgence' : 
+           'Select emergency type'}
+        </h3>
+        
+        <div className="category-buttons">
+          {emergencyCategories.map((category) => (
+            <button
+              key={category.id}
+              onClick={() => setSelectedEmergency(category.id)}
+              className={`category-btn ${selectedEmergency === category.id ? 'active' : ''}`}
+            >
+              <div className="category-icon">
+                <span className="material-icons">
+                  {category.id === 'medical' && 'local_hospital'}
+                  {category.id === 'lost' && 'location_disabled'}
+                  {category.id === 'safety' && 'shield'}
+                </span>
+              </div>
+              {settings.language === 'es' ? 
+                (category.id === 'medical' ? 'Médico' : 
+                 category.id === 'lost' ? 'Perdido' : 'Seguridad') :
+               settings.language === 'fr' ? 
+               (category.id === 'medical' ? 'Médical' : 
+                category.id === 'lost' ? 'Perdu' : 'Sécurité') :
+               (category.id === 'medical' ? 'Medical' : 
+                category.id === 'lost' ? 'Lost' : 'Safety')}
+            </button>
+          ))}
+        </div>
       </div>
 
       <div className="emergency-categories" style={{ marginBottom: '30px' }}>
@@ -190,36 +217,24 @@ const EmergencyPanel: React.FC<EmergencyPanelProps> = ({ settings }) => {
       </div>
 
       {selectedEmergency && (
-        <div className="emergency-phrases" style={{ marginBottom: '30px' }}>
+        <div className="emergency-phrases">
           <h3 style={{ fontSize: getFontSize(), textAlign: 'center', marginBottom: '20px' }}>
             {settings.language === 'es' ? 'Selecciona mensaje específico' : 
              settings.language === 'fr' ? 'Sélectionnez le message spécifique' : 
              'Select specific message'}
           </h3>
           
-          <div className="phrase-buttons" style={{ 
-            display: 'grid', 
-            gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-            gap: '15px'
-          }}>
+          <div className="phrase-buttons">
             {emergencyPhrases[selectedEmergency as keyof typeof emergencyPhrases][settings.language].map((phrase, index) => (
               <button
                 key={index}
                 onClick={() => handleShowCard(phrase)}
-                style={{
-                  background: '#f5f5f5',
-                  border: '2px solid #ddd',
-                  padding: '20px',
-                  borderRadius: '12px',
-                  cursor: 'pointer',
-                  fontSize: getFontSize(),
-                  textAlign: 'left'
-                }}
+                className="phrase-btn"
               >
-                <div style={{ fontWeight: '600', marginBottom: '10px' }}>
+                <div style={{ fontWeight: '600', marginBottom: '10px', fontSize: getFontSize() }}>
                   {phrase}
                 </div>
-                <div style={{ color: '#666', fontSize: getFontSize() }}>
+                <div style={{ color: 'var(--color-text-secondary)', fontSize: getFontSize() }}>
                   {offlineService.translate(phrase, settings.language, getTargetLanguage())}
                 </div>
               </button>
@@ -229,86 +244,31 @@ const EmergencyPanel: React.FC<EmergencyPanelProps> = ({ settings }) => {
       )}
 
       {translatedMessage && (
-        <div className="emergency-display" style={{
-          background: 'white',
-          border: '4px solid #f44336',
-          borderRadius: '16px',
-          padding: '40px',
-          textAlign: 'center',
-          marginBottom: '20px',
-          animation: isFlashing ? 'pulse 0.5s infinite' : 'none'
-        }}>
-          <div style={{ 
-            fontSize: getLargeFontSize(), 
-            fontWeight: '700',
-            color: '#f44336',
-            marginBottom: '20px',
-            lineHeight: '1.2'
-          }}>
+        <div className="emergency-display">
+          <div className="emergency-message">
             {translatedMessage}
           </div>
           
-          <div className="visual-indicators" style={{ 
-            display: 'flex', 
-            justifyContent: 'center', 
-            gap: '20px',
-            marginTop: '30px'
-          }}>
-            <div style={{
-              width: '80px',
-              height: '80px',
-              background: '#f44336',
-              borderRadius: '50%',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: '2rem',
-              color: 'white',
-              animation: 'pulse 1s infinite'
-            }}>
-              help
+          <div className="visual-indicators">
+            <div className="indicator-circle">
+              <span className="material-icons">help</span>
             </div>
             
-            <div style={{
-              width: '80px',
-              height: '80px',
-              background: '#ff9800',
-              borderRadius: '50%',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: '2rem',
-              color: 'white',
-              animation: 'pulse 1s infinite',
-              animationDelay: '0.3s'
-            }}>
-              warning
+            <div className="indicator-circle">
+              <span className="material-icons">warning</span>
             </div>
           </div>
           
-          <div className="emergency-actions" style={{ 
-            display: 'flex', 
-            justifyContent: 'center', 
-            gap: '15px',
-            marginTop: '30px'
-          }}>
+          <div className="emergency-actions">
             <button
               onClick={() => {
                 if (settings.vibrationEnabled) {
                   verificationService.confirmMessage('emergency');
                 }
               }}
-              style={{
-                background: '#4CAF50',
-                color: 'white',
-                border: 'none',
-                padding: '15px 30px',
-                fontSize: getFontSize(),
-                borderRadius: '8px',
-                cursor: 'pointer',
-                fontWeight: '600'
-              }}
+              className="btn btn-secondary btn-lg"
             >
+              <span className="material-icons">check</span>
               {settings.language === 'es' ? 'Confirmar Entendido' : 
                settings.language === 'fr' ? 'Confirmer Compris' : 
                'Confirm Understood'}
@@ -320,17 +280,10 @@ const EmergencyPanel: React.FC<EmergencyPanelProps> = ({ settings }) => {
                 setSelectedEmergency('');
                 setIsFlashing(false);
               }}
-              style={{
-                background: '#9E9E9E',
-                color: 'white',
-                border: 'none',
-                padding: '15px 30px',
-                fontSize: getFontSize(),
-                borderRadius: '8px',
-                cursor: 'pointer',
-                fontWeight: '600'
-              }}
+              className="btn btn-ghost"
+              style={{ background: 'var(--color-text-muted)', color: 'white' }}
             >
+              <span className="material-icons">close</span>
               {settings.language === 'es' ? 'Cerrar' : 
                settings.language === 'fr' ? 'Fermer' : 
                'Close'}

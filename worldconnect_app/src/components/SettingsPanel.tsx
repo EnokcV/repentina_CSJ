@@ -66,56 +66,28 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ settings, setSettings }) 
              'Language'}
           </h3>
           
-          <div className="language-options" style={{ 
-            display: 'flex', 
-            justifyContent: 'space-around',
-            gap: '15px'
-          }}>
+          <div className="language-options">
             <button
               onClick={() => handleLanguageChange('es')}
-              style={{
-                background: settings.language === 'es' ? '#2196F3' : '#f5f5f5',
-                color: settings.language === 'es' ? 'white' : '#333',
-                border: '2px solid #2196F3',
-                padding: '15px 25px',
-                borderRadius: '8px',
-                fontSize: getFontSize(),
-                cursor: 'pointer',
-                fontWeight: '600'
-              }}
+              className={`btn ${settings.language === 'es' ? 'btn-primary' : 'btn-outline'}`}
             >
+              <span className="material-icons" style={{ fontSize: '1.2rem' }}>flag</span>
               Español
             </button>
             
             <button
               onClick={() => handleLanguageChange('fr')}
-              style={{
-                background: settings.language === 'fr' ? '#2196F3' : '#f5f5f5',
-                color: settings.language === 'fr' ? 'white' : '#333',
-                border: '2px solid #2196F3',
-                padding: '15px 25px',
-                borderRadius: '8px',
-                fontSize: getFontSize(),
-                cursor: 'pointer',
-                fontWeight: '600'
-              }}
+              className={`btn ${settings.language === 'fr' ? 'btn-primary' : 'btn-outline'}`}
             >
+              <span className="material-icons" style={{ fontSize: '1.2rem' }}>flag</span>
               Français
             </button>
             
             <button
               onClick={() => handleLanguageChange('en')}
-              style={{
-                background: settings.language === 'en' ? '#2196F3' : '#f5f5f5',
-                color: settings.language === 'en' ? 'white' : '#333',
-                border: '2px solid #2196F3',
-                padding: '15px 25px',
-                borderRadius: '8px',
-                fontSize: getFontSize(),
-                cursor: 'pointer',
-                fontWeight: '600'
-              }}
+              className={`btn ${settings.language === 'en' ? 'btn-primary' : 'btn-outline'}`}
             >
+              <span className="material-icons" style={{ fontSize: '1.2rem' }}>flag</span>
               English
             </button>
           </div>
@@ -135,22 +107,15 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ settings, setSettings }) 
           </h3>
           
           <div className="notification-settings">
-            <div className="setting-item" style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              marginBottom: '20px',
-              padding: '15px',
-              background: '#f8f9fa',
-              borderRadius: '8px'
-            }}>
-              <div>
-                <div style={{ fontSize: getFontSize(), fontWeight: '600', marginBottom: '5px' }}>
+            <div className="setting-item">
+              <div className="setting-label">
+                <div className="title">
+                  <span className="material-icons" style={{ verticalAlign: 'middle', marginRight: '8px', fontSize: '1.2rem', color: 'var(--color-primary)' }}>volume_up</span>
                   {settings.language === 'es' ? 'Sonido' : 
                    settings.language === 'fr' ? 'Son' : 
                    'Sound'}
                 </div>
-                <div style={{ fontSize: '0.9rem', color: '#666' }}>
+                <div className="description">
                   {settings.language === 'es' ? 'Activar sonidos de confirmación' : 
                    settings.language === 'fr' ? 'Activer les sons de confirmation' : 
                    'Enable confirmation sounds'}
@@ -159,42 +124,21 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ settings, setSettings }) 
               
               <button
                 onClick={handleSoundToggle}
-                style={{
-                  background: settings.soundEnabled ? '#4CAF50' : '#ccc',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '20px',
-                  padding: '8px 16px',
-                  fontSize: '0.9rem',
-                  cursor: 'pointer',
-                  fontWeight: '600',
-                  minWidth: '60px'
-                }}
+                className={`toggle-btn ${settings.soundEnabled ? 'active' : ''}`}
               >
-                {settings.soundEnabled ? 
-                 (settings.language === 'es' ? 'ON' : 
-                  settings.language === 'fr' ? 'ON' : 'ON') :
-                 (settings.language === 'es' ? 'OFF' : 
-                  settings.language === 'fr' ? 'OFF' : 'OFF')}
+                {settings.soundEnabled ? 'ON' : 'OFF'}
               </button>
             </div>
 
-            <div className="setting-item" style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              marginBottom: '20px',
-              padding: '15px',
-              background: '#f8f9fa',
-              borderRadius: '8px'
-            }}>
-              <div>
-                <div style={{ fontSize: getFontSize(), fontWeight: '600', marginBottom: '5px' }}>
+            <div className="setting-item">
+              <div className="setting-label">
+                <div className="title">
+                  <span className="material-icons" style={{ verticalAlign: 'middle', marginRight: '8px', fontSize: '1.2rem', color: 'var(--color-primary)' }}>vibration</span>
                   {settings.language === 'es' ? 'Vibración' : 
                    settings.language === 'fr' ? 'Vibration' : 
                    'Vibration'}
                 </div>
-                <div style={{ fontSize: '0.9rem', color: '#666' }}>
+                <div className="description">
                   {settings.language === 'es' ? 'Activar vibración de confirmación' : 
                    settings.language === 'fr' ? 'Activer la vibration de confirmation' : 
                    'Enable confirmation vibration'}
@@ -203,23 +147,9 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ settings, setSettings }) 
               
               <button
                 onClick={handleVibrationToggle}
-                style={{
-                  background: settings.vibrationEnabled ? '#4CAF50' : '#ccc',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '20px',
-                  padding: '8px 16px',
-                  fontSize: '0.9rem',
-                  cursor: 'pointer',
-                  fontWeight: '600',
-                  minWidth: '60px'
-                }}
+                className={`toggle-btn ${settings.vibrationEnabled ? 'active' : ''}`}
               >
-                {settings.vibrationEnabled ? 
-                 (settings.language === 'es' ? 'ON' : 
-                  settings.language === 'fr' ? 'ON' : 'ON') :
-                 (settings.language === 'es' ? 'OFF' : 
-                  settings.language === 'fr' ? 'OFF' : 'OFF')}
+                {settings.vibrationEnabled ? 'ON' : 'OFF'}
               </button>
             </div>
           </div>
@@ -254,16 +184,8 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ settings, setSettings }) 
               <div style={{ display: 'flex', gap: '10px' }}>
                 <button
                   onClick={() => handleFontSizeChange('small')}
-                  style={{
-                    background: settings.fontSize === 'small' ? '#2196F3' : '#f5f5f5',
-                    color: settings.fontSize === 'small' ? 'white' : '#333',
-                    border: '2px solid #2196F3',
-                    padding: '10px 20px',
-                    borderRadius: '8px',
-                    fontSize: getFontSize(),
-                    cursor: 'pointer',
-                    fontWeight: '600'
-                  }}
+                  className={`btn ${settings.fontSize === 'small' ? 'btn-primary' : 'btn-outline'}`}
+                  style={{ flex: 1 }}
                 >
                   {settings.language === 'es' ? 'Pequeño' : 
                    settings.language === 'fr' ? 'Petit' : 
@@ -272,16 +194,8 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ settings, setSettings }) 
                 
                 <button
                   onClick={() => handleFontSizeChange('medium')}
-                  style={{
-                    background: settings.fontSize === 'medium' ? '#2196F3' : '#f5f5f5',
-                    color: settings.fontSize === 'medium' ? 'white' : '#333',
-                    border: '2px solid #2196F3',
-                    padding: '10px 20px',
-                    borderRadius: '8px',
-                    fontSize: getFontSize(),
-                    cursor: 'pointer',
-                    fontWeight: '600'
-                  }}
+                  className={`btn ${settings.fontSize === 'medium' ? 'btn-primary' : 'btn-outline'}`}
+                  style={{ flex: 1 }}
                 >
                   {settings.language === 'es' ? 'Mediano' : 
                    settings.language === 'fr' ? 'Moyen' : 
@@ -290,16 +204,8 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ settings, setSettings }) 
                 
                 <button
                   onClick={() => handleFontSizeChange('large')}
-                  style={{
-                    background: settings.fontSize === 'large' ? '#2196F3' : '#f5f5f5',
-                    color: settings.fontSize === 'large' ? 'white' : '#333',
-                    border: '2px solid #2196F3',
-                    padding: '10px 20px',
-                    borderRadius: '8px',
-                    fontSize: getFontSize(),
-                    cursor: 'pointer',
-                    fontWeight: '600'
-                  }}
+                  className={`btn ${settings.fontSize === 'large' ? 'btn-primary' : 'btn-outline'}`}
+                  style={{ flex: 1 }}
                 >
                   {settings.language === 'es' ? 'Grande' : 
                    settings.language === 'fr' ? 'Grand' : 
@@ -308,21 +214,15 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ settings, setSettings }) 
               </div>
             </div>
 
-            <div className="setting-item" style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              padding: '15px',
-              background: '#f8f9fa',
-              borderRadius: '8px'
-            }}>
-              <div>
-                <div style={{ fontSize: getFontSize(), fontWeight: '600', marginBottom: '5px' }}>
+            <div className="setting-item">
+              <div className="setting-label">
+                <div className="title">
+                  <span className="material-icons" style={{ verticalAlign: 'middle', marginRight: '8px', fontSize: '1.2rem', color: 'var(--color-secondary)' }}>eco</span>
                   {settings.language === 'es' ? 'Modo Eco' : 
                    settings.language === 'fr' ? 'Mode Éco' : 
                    'Eco Mode'}
                 </div>
-                <div style={{ fontSize: '0.9rem', color: '#666' }}>
+                <div className="description">
                   {settings.language === 'es' ? 'Ahorra batería y reduce animaciones' : 
                    settings.language === 'fr' ? 'Économise la batterie et réduit les animations' : 
                    'Save battery and reduce animations'}
@@ -331,23 +231,9 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ settings, setSettings }) 
               
               <button
                 onClick={handleEcoModeToggle}
-                style={{
-                  background: settings.ecoMode ? '#4CAF50' : '#ccc',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '20px',
-                  padding: '8px 16px',
-                  fontSize: '0.9rem',
-                  cursor: 'pointer',
-                  fontWeight: '600',
-                  minWidth: '60px'
-                }}
+                className={`toggle-btn ${settings.ecoMode ? 'active' : ''}`}
               >
-                {settings.ecoMode ? 
-                 (settings.language === 'es' ? 'ON' : 
-                  settings.language === 'fr' ? 'ON' : 'ON') :
-                 (settings.language === 'es' ? 'OFF' : 
-                  settings.language === 'fr' ? 'OFF' : 'OFF')}
+                {settings.ecoMode ? 'ON' : 'OFF'}
               </button>
             </div>
           </div>
@@ -387,13 +273,7 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ settings, setSettings }) 
           </div>
         </div>
 
-        <div className="reset-section" style={{
-          background: '#FFF3E1',
-          border: '2px solid #FF9800',
-          borderRadius: '12px',
-          padding: '20px',
-          textAlign: 'center'
-        }}>
+        <div className="reset-section">
           <button
             onClick={() => {
               setSettings({
@@ -401,20 +281,14 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ settings, setSettings }) 
                 soundEnabled: true,
                 vibrationEnabled: true,
                 ecoMode: false,
-                fontSize: 'medium'
+                fontSize: 'medium',
+                themeMode: 'system'
               });
             }}
-            style={{
-              background: '#FF9800',
-              color: 'white',
-              border: 'none',
-              padding: '12px 24px',
-              fontSize: getFontSize(),
-              borderRadius: '8px',
-              cursor: 'pointer',
-              fontWeight: '600'
-            }}
+            className="btn btn-warning"
+            style={{ background: 'var(--color-warning)', color: 'white' }}
           >
+            <span className="material-icons">restart_alt</span>
             {settings.language === 'es' ? 'Restablecer Configuración' : 
              settings.language === 'fr' ? 'Réinitialiser les Paramètres' : 
              'Reset Settings'}

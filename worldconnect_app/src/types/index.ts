@@ -40,4 +40,62 @@ export interface AppSettings {
   vibrationEnabled: boolean;
   ecoMode: boolean;
   fontSize: 'small' | 'medium' | 'large';
+  themeMode: 'light' | 'dark' | 'system';
+}
+
+export type ThemeMode = 'light' | 'dark' | 'system';
+
+export interface Match {
+  id: string;
+  homeTeam: Team;
+  awayTeam: Team;
+  homeScore?: number;
+  awayScore?: number;
+  date: string;
+  time: string;
+  venue: string;
+  stadium: string;
+  group?: string;
+  phase: 'group' | 'round16' | 'quarter' | 'semi' | 'final' | 'third';
+  status: 'upcoming' | 'live' | 'finished';
+}
+
+export interface Team {
+  id: string;
+  name: string;
+  shortName: string;
+  flag: string;
+  color: string;
+}
+
+export interface Venue {
+  id: string;
+  name: string;
+  city: string;
+  state: string;
+  lat: number;
+  lng: number;
+  stadium: string;
+  capacity: number;
+  type: 'stadium' | 'training' | 'fanfest';
+}
+
+export interface PointOfInterest {
+  id: string;
+  name: string;
+  category: 'hospital' | 'police' | 'restaurant' | 'hotel' | 'metro' | 'embassy' | 'market';
+  lat: number;
+  lng: number;
+  address: string;
+  city: string;
+}
+
+export interface TranslationHistoryItem {
+  id: string;
+  originalText: string;
+  translatedText: string;
+  fromLang: string;
+  toLang: string;
+  timestamp: number;
+  isFavorite: boolean;
 }

@@ -59,9 +59,10 @@ describe('App Component', () => {
   test('navigates to settings panel when settings button is clicked', async () => {
     render(<App />);
     
-    // Find and click the settings button (⚙️)
     const buttons = screen.getAllByRole('button');
-    const settingsButton = buttons.find(btn => btn.textContent.includes('⚙️'));
+    const settingsButton = buttons.find(btn => btn.textContent?.includes('Ajustes') || 
+      btn.textContent?.includes('Paramètres') || 
+      btn.textContent?.includes('Settings'));
     
     if (settingsButton) {
       await userEvent.click(settingsButton);
@@ -76,7 +77,8 @@ describe('App Component', () => {
       soundEnabled: false,
       vibrationEnabled: false,
       ecoMode: true,
-      fontSize: 'large'
+      fontSize: 'large',
+      themeMode: 'dark' as const
     };
     
     localStorage.setItem('worldconnect_settings', JSON.stringify(testSettings));
