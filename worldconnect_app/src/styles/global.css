@@ -848,6 +848,44 @@ textarea.input-field, textarea { resize: vertical; min-height: 120px; }
   margin-top: 24px;
 }
 
+.emergency-tips-container {
+  margin-top: 24px;
+}
+
+.tip-card {
+  background: var(--surface-container-low);
+  border: none;
+  border-left: 4px solid #ff9800;
+  border-radius: var(--radius-default);
+  padding: 20px;
+  transition: transform var(--transition-base), box-shadow var(--transition-base);
+}
+
+.tip-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.tip-card .tip-number {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #ff9800;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 0.9rem;
+  margin-bottom: 12px;
+}
+
+.tips-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+}
+
 .emergency-tips h4 {
   color: var(--on-surface);
   margin-bottom: 12px;
@@ -1161,6 +1199,41 @@ textarea.input-field, textarea { resize: vertical; min-height: 120px; }
 }
 
 :root.dark .bottom-nav { background: rgba(16,16,18,0.85); }
+
+/* Emergency Tips Dark Mode */
+:root.dark .emergency-tips-container .tip-card {
+  background: var(--surface-container) !important;
+}
+
+:root.dark .emergency-tips-container .tip-card p {
+  color: var(--on-surface) !important;
+}
+
+:root.dark .emergency-phrases .phrase-btn {
+  background: var(--surface-container) !important;
+}
+
+:root.dark .category-btn {
+  background: var(--surface-container-lowest) !important;
+  color: var(--on-surface) !important;
+}
+
+:root.dark .category-btn:hover {
+  background: var(--surface-container) !important;
+}
+
+:root.dark .phrase-btn {
+  background: var(--surface-container) !important;
+  color: var(--on-surface) !important;
+}
+
+:root.dark .tip-card {
+  background: var(--surface-container-low) !important;
+}
+
+:root.dark .tip-card p {
+  color: var(--on-surface) !important;
+}
 
 .nav-btn {
   background: none;

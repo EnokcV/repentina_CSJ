@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import offlineService from '../services/offlineService';
+import React, { useState } from 'react';
 import verificationService from '../services/verificationService';
 import { AppSettings } from '../types';
 
@@ -14,46 +13,47 @@ const EmergencyPanel: React.FC<EmergencyPanelProps> = ({ settings }) => {
   const emergencyCategories = [
     {
       id: 'medical',
-      icon: 'medical_services',
+      icon: 'local_hospital',
       color: '#f44336',
-      phrases: ['medical', 'help', 'police']
+      bgColor: 'rgba(244, 67, 54, 0.1)'
     },
     {
       id: 'lost',
-      icon: 'location_off',
+      icon: 'location_disabled',
       color: '#ff9800',
-      phrases: ['lost']
+      bgColor: 'rgba(255, 152, 0, 0.1)'
     },
     {
       id: 'safety',
-      icon: 'security',
+      icon: 'shield',
       color: '#4caf50',
-      phrases: ['help', 'police']
+      bgColor: 'rgba(76, 175, 80, 0.1)'
     }
   ];
 
-  const emergencyPhrases = {
+  const emergencyPhrases: Record<string, Record<'es' | 'fr', string[]>> = {
     medical: {
       es: ['Necesito un médico', 'Es una emergencia médica', 'Llame a una ambulancia'],
-      fr: ['J\'ai besoin d\'un médecin', 'C\'est une urgence médicale', 'Appelez une ambulance'],
-      en: ['I need a doctor', 'This is a medical emergency', 'Call an ambulance']
+      fr: ['J\'ai besoin d\'un médecin', 'C\'est une urgence médicale', 'Appelez une ambulance']
     },
     lost: {
       es: ['Estoy perdido/a', 'No encuentro mi camino', 'Necesito ayuda para encontrar'],
-      fr: ['Je suis perdu(e)', 'Je ne trouve pas mon chemin', 'J\'ai besoin d\'aide pour trouver'],
-      en: ['I\'m lost', 'I can\'t find my way', 'I need help finding']
+      fr: ['Je suis perdu(e)', 'Je ne trouve pas mon chemin', 'J\'ai besoin d\'aide pour trouver']
     },
     safety: {
       es: ['Necesito ayuda', 'Llame a la policía', 'Me siento inseguro/a'],
-      fr: ['J\'ai besoin d\'aide', 'Appelez la police', 'Je ne me sens pas en sécurité'],
-      en: ['I need help', 'Call the police', 'I feel unsafe']
+      fr: ['J\'ai besoin d\'aide', 'Appelez la police', 'Je ne me sens pas en sécurité']
     }
   };
 
-  const getTargetLanguage = () => {
-    if (settings.language === 'es') return 'fr';
-    if (settings.language === 'fr') return 'es';
-    return 'fr';
+  type EmergencyLang = 'es' | 'fr';
+
+  const getCurrentLang = (): EmergencyLang => {
+    return settings.language === 'es' ? 'es' : 'fr';
+  };
+
+  const getTargetLang = (): EmergencyLang => {
+    return settings.language === 'es' ? 'fr' : 'es';
   };
 
   const getFontSize = () => {
@@ -64,205 +64,177 @@ const EmergencyPanel: React.FC<EmergencyPanelProps> = ({ settings }) => {
     }
   };
 
-  const handleEmergencySelect = (category: string, phrase: string) => {
-    setSelectedEmergency(category);
-    const targetLang = getTargetLanguage();
-    const translated = offlineService.translate(phrase, settings.language, targetLang);
-    setTranslatedMessage(translated);
+  const handleShowCard = (phrase: string, targetPhrase: string) => {
+    setTranslatedMessage(targetPhrase);
     
     if (settings.vibrationEnabled) {
       verificationService.signalMessageReceived();
     }
-    
-    startFlashing();
   };
 
-  const startFlashing = () => {
-    setTimeout(() => {}, 5000);
+  const getCategoryLabel = (categoryId: string) => {
+    const labels: Record<string, Record<'es' | 'fr', string>> = {
+      medical: { es: 'Médico', fr: 'Médical' },
+      lost: { es: 'Perdido', fr: 'Perdu' },
+      safety: { es: 'Seguridad', fr: 'Sécurité' }
+    };
+    return labels[categoryId]?.[getCurrentLang()] || categoryId;
   };
 
-  const handleShowCard = (message: string) => {
-    const targetLang = getTargetLanguage();
-    const translated = offlineService.translate(message, settings.language, targetLang);
-    setTranslatedMessage(translated);
-    
-    if (settings.vibrationEnabled) {
-      verificationService.signalMessageReceived();
-    }
-    
-    startFlashing();
+  const getLabel = (key: string) => {
+    const labels: Record<string, Record<'es' | 'fr', string>> = {
+      title: { es: 'MODO EMERGENCIA', fr: 'MODE URGENCE' },
+      subtitle: { es: 'Tarjetas visuales para comunicación rápida', fr: 'Cartes visuels pour communication rapide' },
+      selectType: { es: 'Selecciona tipo de emergencia', fr: 'Sélectionnez le type d\'urgence' },
+      selectMessage: { es: 'Selecciona mensaje específico', fr: 'Sélectionnez le message spécifique' },
+      confirm: { es: 'Confirmar Entendido', fr: 'Confirmer Compris' },
+      close: { es: 'Cerrar', fr: 'Fermer' },
+      tipsTitle: { es: 'Consejos de Emergencia', fr: 'Conseils d\'Urgence' },
+      tip1: { es: 'Muestra esta tarjeta a las autoridades', fr: 'Montrez cette carte aux autorités' },
+      tip2: { es: 'Mantén la calma y señala el mensaje', fr: 'Restez calme et pointez le message' },
+      tip3: { es: 'Usa gestos si la verbalización falla', fr: 'Utilisez des gestes si la verbalisation échoue' },
+      showCard: { es: 'MOSTRAR TARJETA', fr: 'AFFICHER LA CARTE' }
+    };
+    return labels[key]?.[getCurrentLang()] || key;
   };
-
-  const getEmergencyMessage = (category: string) => {
-    const phrases = emergencyPhrases[category as keyof typeof emergencyPhrases];
-    if (phrases && phrases[settings.language]) {
-      return phrases[settings.language][0];
-    }
-    return '';
-  };
-
-  useEffect(() => {
-    if (selectedEmergency) {
-      const message = getEmergencyMessage(selectedEmergency);
-      if (message) {
-        handleEmergencySelect(selectedEmergency, message);
-      }
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedEmergency]);
 
   return (
     <div className="emergency-panel">
-<div className="emergency-mode">
+      <div className="emergency-mode">
         <h2>
           <span className="material-icons" style={{ verticalAlign: 'middle', marginRight: '8px' }}>emergency</span>
-          {settings.language === 'es' ? 'MODO EMERGENCIA' : 
-           settings.language === 'fr' ? 'MODE URGENCE' : 
-           'EMERGENCY MODE'}
+          {getLabel('title')}
         </h2>
-        <p style={{ fontSize: getFontSize() }}>
-          {settings.language === 'es' ? 'Tarjetas visuales para comunicación rápida' : 
-           settings.language === 'fr' ? 'Cartes visuels pour communication rapide' : 
-           'Visual cards for quick communication'}
+        <p style={{ fontSize: getFontSize(), opacity: 0.9 }}>
+          {getLabel('subtitle')}
         </p>
       </div>
 
-      <div className="emergency-categories">
-        <h3 style={{ fontSize: getFontSize(), textAlign: 'center', marginBottom: '20px' }}>
-          {settings.language === 'es' ? 'Selecciona tipo de emergencia' : 
-           settings.language === 'fr' ? 'Sélectionnez le type d\'urgence' : 
-           'Select emergency type'}
-        </h3>
-        
-        <div className="category-buttons">
-          {emergencyCategories.map((category) => (
-            <button
-              key={category.id}
-              onClick={() => setSelectedEmergency(category.id)}
-              className={`category-btn ${selectedEmergency === category.id ? 'active' : ''}`}
-            >
-              <div className="category-icon">
-                <span className="material-icons">
-                  {category.id === 'medical' && 'local_hospital'}
-                  {category.id === 'lost' && 'location_disabled'}
-                  {category.id === 'safety' && 'shield'}
-                </span>
-              </div>
-              {settings.language === 'es' ? 
-                (category.id === 'medical' ? 'Médico' : 
-                 category.id === 'lost' ? 'Perdido' : 'Seguridad') :
-               settings.language === 'fr' ? 
-               (category.id === 'medical' ? 'Médical' : 
-                category.id === 'lost' ? 'Perdu' : 'Sécurité') :
-               (category.id === 'medical' ? 'Medical' : 
-                category.id === 'lost' ? 'Lost' : 'Safety')}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <div className="emergency-categories" style={{ marginBottom: '30px' }}>
-        <h3 style={{ fontSize: getFontSize(), textAlign: 'center', marginBottom: '20px' }}>
-          {settings.language === 'es' ? 'Selecciona tipo de emergencia' : 
-           settings.language === 'fr' ? 'Sélectionnez le type d\'urgence' : 
-           'Select emergency type'}
+      <div className="emergency-categories" style={{ marginBottom: '32px' }}>
+        <h3 style={{ fontSize: getFontSize(), textAlign: 'center', marginBottom: '20px', color: 'var(--color-text-secondary)' }}>
+          {getLabel('selectType')}
         </h3>
         
         <div className="category-buttons" style={{ 
-          display: 'flex', 
-          justifyContent: 'center', 
-          gap: '15px',
-          flexWrap: 'wrap'
+          display: 'grid', 
+          gridTemplateColumns: 'repeat(3, 1fr)',
+          gap: '12px'
         }}>
           {emergencyCategories.map((category) => (
             <button
               key={category.id}
               onClick={() => setSelectedEmergency(category.id)}
+              className={`category-btn ${selectedEmergency === category.id ? 'active' : ''}`}
               style={{
-                background: selectedEmergency === category.id ? category.color : 'white',
-                color: selectedEmergency === category.id ? 'white' : category.color,
-                border: `2px solid ${category.color}`,
-                padding: '20px',
-                borderRadius: '12px',
-                cursor: 'pointer',
-                fontSize: getFontSize(),
-                fontWeight: '600',
-                minWidth: '120px'
+                borderLeft: `8px solid ${category.color}`,
+                background: selectedEmergency === category.id ? category.bgColor : 'var(--surface-container-lowest)'
               }}
             >
-              <div style={{ fontSize: '2rem', marginBottom: '10px' }}>
-                {category.icon}
+              <div 
+                className="category-icon" 
+                style={{ background: category.bgColor, color: category.color }}
+              >
+                <span className="material-icons">{category.icon}</span>
               </div>
-              {settings.language === 'es' ? 
-                (category.id === 'medical' ? 'Médico' : 
-                 category.id === 'lost' ? 'Perdido' : 'Seguridad') :
-                settings.language === 'fr' ? 
-                (category.id === 'medical' ? 'Médical' : 
-                 category.id === 'lost' ? 'Perdu' : 'Sécurité') :
-                (category.id === 'medical' ? 'Medical' : 
-                 category.id === 'lost' ? 'Lost' : 'Safety')
-              }
+              <span style={{ fontWeight: '700', fontSize: '0.95rem' }}>
+                {getCategoryLabel(category.id)}
+              </span>
             </button>
           ))}
         </div>
       </div>
 
       {selectedEmergency && (
-        <div className="emergency-phrases">
-          <h3 style={{ fontSize: getFontSize(), textAlign: 'center', marginBottom: '20px' }}>
-            {settings.language === 'es' ? 'Selecciona mensaje específico' : 
-             settings.language === 'fr' ? 'Sélectionnez le message spécifique' : 
-             'Select specific message'}
+        <div className="emergency-phrases" style={{ marginBottom: '32px' }}>
+          <h3 style={{ fontSize: getFontSize(), textAlign: 'center', marginBottom: '20px', color: 'var(--color-text-secondary)' }}>
+            {getLabel('selectMessage')}
           </h3>
           
-          <div className="phrase-buttons">
-            {emergencyPhrases[selectedEmergency as keyof typeof emergencyPhrases][settings.language].map((phrase, index) => (
-              <button
-                key={index}
-                onClick={() => handleShowCard(phrase)}
-                className="phrase-btn"
-              >
-                <div style={{ fontWeight: '600', marginBottom: '10px', fontSize: getFontSize() }}>
-                  {phrase}
-                </div>
-                <div style={{ color: 'var(--color-text-secondary)', fontSize: getFontSize() }}>
-                  {offlineService.translate(phrase, settings.language, getTargetLanguage())}
-                </div>
-              </button>
-            ))}
+          <div className="phrase-buttons" style={{ gap: '16px' }}>
+            {emergencyPhrases[selectedEmergency]?.[getCurrentLang()]?.map((phrase, index) => {
+              const targetPhrase = emergencyPhrases[selectedEmergency]?.[getTargetLang()]?.[index] || '';
+              return (
+                <button
+                  key={index}
+                  onClick={() => handleShowCard(phrase, targetPhrase)}
+                  className="phrase-btn"
+                  style={{
+                    padding: '24px',
+                    background: 'var(--surface-container-lowest)',
+                    borderRadius: 'var(--radius-default)',
+                    textAlign: 'left'
+                  }}
+                >
+                  <div style={{ 
+                    fontWeight: '700', 
+                    fontSize: getFontSize(), 
+                    marginBottom: '16px',
+                    color: 'var(--color-text)'
+                  }}>
+                    {phrase}
+                  </div>
+                  <div style={{ 
+                    color: 'var(--color-text-secondary)', 
+                    fontSize: getFontSize(),
+                    padding: '12px',
+                    background: 'var(--surface-container-high)',
+                    borderRadius: '8px',
+                    fontStyle: 'italic'
+                  }}>
+                    {targetPhrase}
+                  </div>
+                  <div style={{
+                    marginTop: '16px',
+                    padding: '8px 16px',
+                    background: 'var(--primary)',
+                    color: 'white',
+                    borderRadius: '20px',
+                    fontSize: '0.8rem',
+                    fontWeight: '700',
+                    display: 'inline-block'
+                  }}>
+                    {getLabel('showCard')}
+                  </div>
+                </button>
+              );
+            })}
           </div>
         </div>
       )}
 
       {translatedMessage && (
-        <div className="emergency-display">
-          <div className="emergency-message">
+        <div className="emergency-display" style={{ marginBottom: '32px' }}>
+          <div className="emergency-message" style={{ fontSize: '2.5rem', fontWeight: '800' }}>
             {translatedMessage}
           </div>
           
-          <div className="visual-indicators">
-            <div className="indicator-circle">
+          <div className="visual-indicators" style={{ display: 'flex', gap: '16px', margin: '24px 0' }}>
+            <div className="indicator-circle" style={{ 
+              background: 'rgba(255,255,255,0.2)',
+              animation: 'indicatorPulse 1.5s ease-in-out infinite'
+            }}>
               <span className="material-icons">help</span>
             </div>
-            
-            <div className="indicator-circle">
+            <div className="indicator-circle" style={{ 
+              background: 'rgba(255,255,255,0.15)',
+              animation: 'indicatorPulse 1.5s ease-in-out infinite 0.5s'
+            }}>
               <span className="material-icons">warning</span>
             </div>
           </div>
           
-          <div className="emergency-actions">
+          <div className="emergency-actions" style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
             <button
               onClick={() => {
                 if (settings.vibrationEnabled) {
                   verificationService.confirmMessage('emergency');
                 }
+                setTranslatedMessage('');
               }}
               className="btn btn-secondary btn-lg"
             >
               <span className="material-icons">check</span>
-              {settings.language === 'es' ? 'Confirmar Entendido' : 
-               settings.language === 'fr' ? 'Confirmer Compris' : 
-               'Confirm Understood'}
+              {getLabel('confirm')}
             </button>
             
             <button
@@ -271,47 +243,54 @@ const EmergencyPanel: React.FC<EmergencyPanelProps> = ({ settings }) => {
                 setSelectedEmergency('');
               }}
               className="btn btn-ghost"
-              style={{ background: 'var(--color-text-muted)', color: 'white' }}
             >
               <span className="material-icons">close</span>
-              {settings.language === 'es' ? 'Cerrar' : 
-               settings.language === 'fr' ? 'Fermer' : 
-               'Close'}
+              {getLabel('close')}
             </button>
           </div>
         </div>
       )}
 
-      <div className="emergency-tips" style={{
-        background: '#fff3e0',
-        border: '2px solid #ff9800',
-        borderRadius: '12px',
-        padding: '20px',
-        marginTop: '20px'
-      }}>
-        <h4 style={{ fontSize: getFontSize(), marginBottom: '15px', color: '#ff9800' }}>
-          {settings.language === 'es' ? 'Consejos de Emergencia' : 
-           settings.language === 'fr' ? 'Conseils d\'Urgence' : 
-           'Emergency Tips'}
+      <div className="emergency-tips-container">
+        <h4 style={{ 
+          fontSize: getFontSize(), 
+          marginBottom: '16px', 
+          color: 'var(--on-surface)',
+          fontWeight: '800',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px'
+        }}>
+          <span className="material-icons" style={{ color: '#ff9800' }}>lightbulb</span>
+          {getLabel('tipsTitle')}
         </h4>
         
-        <ul style={{ fontSize: getFontSize(), paddingLeft: '20px' }}>
-          <li style={{ marginBottom: '10px' }}>
-            {settings.language === 'es' ? 'Muestra esta tarjeta a las autoridades' : 
-             settings.language === 'fr' ? 'Montrez cette carte aux autorités' : 
-             'Show this card to authorities'}
-          </li>
-          <li style={{ marginBottom: '10px' }}>
-            {settings.language === 'es' ? 'Mantén la calma y señala el mensaje' : 
-             settings.language === 'fr' ? 'Restez calme et pointez le message' : 
-             'Stay calm and point to the message'}
-          </li>
-          <li style={{ marginBottom: '10px' }}>
-            {settings.language === 'es' ? 'Usa gestos si la verbalización falla' : 
-             settings.language === 'fr' ? 'Utilisez des gestes si la verbalisation échoue' : 
-             'Use gestures if verbal communication fails'}
-          </li>
-        </ul>
+        <div className="tips-grid" style={{ 
+          display: 'grid', 
+          gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+          gap: '12px'
+        }}>
+          <div className="tip-card">
+            <div className="tip-number">1</div>
+            <p style={{ fontSize: '0.95rem', color: 'var(--color-text)' }}>
+              {getLabel('tip1')}
+            </p>
+          </div>
+
+          <div className="tip-card">
+            <div className="tip-number">2</div>
+            <p style={{ fontSize: '0.95rem', color: 'var(--color-text)' }}>
+              {getLabel('tip2')}
+            </p>
+          </div>
+
+          <div className="tip-card">
+            <div className="tip-number">3</div>
+            <p style={{ fontSize: '0.95rem', color: 'var(--color-text)' }}>
+              {getLabel('tip3')}
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   );

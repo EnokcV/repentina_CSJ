@@ -67,10 +67,15 @@ function App() {
       const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
       const isDark = settings.themeMode === 'dark' || 
         (settings.themeMode === 'system' && prefersDark);
-      document.documentElement.classList.toggle('dark', isDark);
+      if (isDark) {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
     };
     applyTheme();
-  }, [settings]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [settings.themeMode, settings.ecoMode]);
 
   const renderCurrentView = () => {
     switch (currentView) {
