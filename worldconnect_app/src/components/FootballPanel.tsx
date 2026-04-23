@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { AppSettings, Match } from '../types';
 
 interface FootballPanelProps {
@@ -39,7 +39,6 @@ const getFlagUrl = (teamId: string): string => {
 
 const FootballPanel: React.FC<FootballPanelProps> = ({ settings }) => {
   const [selectedDate, setSelectedDate] = useState<string>('all');
-  const [loading, setLoading] = useState(false);
 
   const getText = useCallback((key: string): string => {
     const texts: Record<string, Record<string, string>> = {
@@ -165,18 +164,7 @@ const FootballPanel: React.FC<FootballPanelProps> = ({ settings }) => {
         ))}
       </div>
 
-      {loading ? (
-        <div style={{
-          textAlign: 'center',
-          padding: '48px',
-          color: 'var(--on-surface-variant)'
-        }}>
-          <span className="material-icons" style={{ fontSize: '48px', animation: 'spin 1s linear infinite' }}>
-            refresh
-          </span>
-          <p>{getText('loading')}</p>
-        </div>
-      ) : filteredMatches.length === 0 ? (
+      {filteredMatches.length === 0 ? (
         <div style={{
           textAlign: 'center',
           padding: '48px',
