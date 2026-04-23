@@ -111,7 +111,33 @@ function App() {
           <span className="material-icons" style={{ verticalAlign: 'middle', marginRight: '8px' }}>sports_soccer</span>
           WorldConnect
         </h1>
-        <p>Traducción instantánea para el Mundial</p>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <button
+            onClick={() => setSettings(prev => ({ 
+              ...prev, 
+              themeMode: prev.themeMode === 'dark' ? 'light' : 'dark' 
+            }))}
+            style={{
+              background: 'var(--surface-container-high)',
+              border: 'none',
+              borderRadius: '50%',
+              width: '40px',
+              height: '40px',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: 'var(--color-text)'
+            }}
+            title={settings.language === 'es' ? 'Cambiar tema' : 
+                  settings.language === 'fr' ? 'Changer le thème' : 
+                  'Toggle theme'}
+          >
+            <span className="material-icons">
+              {settings.themeMode === 'dark' ? 'light_mode' : 'dark_mode'}
+            </span>
+          </button>
+        </div>
       </header>
 
       <main className="container">

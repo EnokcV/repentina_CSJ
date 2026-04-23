@@ -24,6 +24,10 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ settings, setSettings }) 
     setSettings(prev => ({ ...prev, ecoMode: !prev.ecoMode }));
   };
 
+  const handleThemeChange = (themeMode: 'light' | 'dark' | 'system') => {
+    setSettings(prev => ({ ...prev, themeMode }));
+  };
+
   const handleFontSizeChange = (fontSize: 'small' | 'medium' | 'large') => {
     setSettings(prev => ({ ...prev, fontSize }));
   };
@@ -172,7 +176,55 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ settings, setSettings }) 
             <div className="setting-item" style={{
               marginBottom: '20px',
               padding: '15px',
-              background: '#f8f9fa',
+              background: 'var(--surface-container-low)',
+              borderRadius: '8px'
+            }}>
+              <div style={{ fontSize: getFontSize(), fontWeight: '600', marginBottom: '15px' }}>
+                {settings.language === 'es' ? 'Tema' : 
+                 settings.language === 'fr' ? 'Thème' : 
+                 'Theme'}
+              </div>
+              
+              <div style={{ display: 'flex', gap: '10px' }}>
+                <button
+                  onClick={() => handleThemeChange('light')}
+                  className={`btn ${settings.themeMode === 'light' ? 'btn-primary' : 'btn-outline'}`}
+                  style={{ flex: 1 }}
+                >
+                  <span className="material-icons" style={{ fontSize: '1rem' }}>light_mode</span>
+                  {settings.language === 'es' ? 'Claro' : 
+                   settings.language === 'fr' ? 'Clair' : 
+                   'Light'}
+                </button>
+                
+                <button
+                  onClick={() => handleThemeChange('dark')}
+                  className={`btn ${settings.themeMode === 'dark' ? 'btn-primary' : 'btn-outline'}`}
+                  style={{ flex: 1 }}
+                >
+                  <span className="material-icons" style={{ fontSize: '1rem' }}>dark_mode</span>
+                  {settings.language === 'es' ? 'Obscuro' : 
+                   settings.language === 'fr' ? 'Sombre' : 
+                   'Dark'}
+                </button>
+                
+                <button
+                  onClick={() => handleThemeChange('system')}
+                  className={`btn ${settings.themeMode === 'system' ? 'btn-primary' : 'btn-outline'}`}
+                  style={{ flex: 1 }}
+                >
+                  <span className="material-icons" style={{ fontSize: '1rem' }}>settings_suggest</span>
+                  {settings.language === 'es' ? 'Sistema' : 
+                   settings.language === 'fr' ? 'Système' : 
+                   'System'}
+                </button>
+              </div>
+            </div>
+
+            <div className="setting-item" style={{
+              marginBottom: '20px',
+              padding: '15px',
+              background: 'var(--surface-container-low)',
               borderRadius: '8px'
             }}>
               <div style={{ fontSize: getFontSize(), fontWeight: '600', marginBottom: '15px' }}>
