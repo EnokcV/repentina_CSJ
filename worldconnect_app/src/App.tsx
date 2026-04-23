@@ -7,12 +7,14 @@ import NegotiationPanel from './components/NegotiationPanel';
 import SettingsPanel from './components/SettingsPanel';
 import MapPanel from './components/MapPanel';
 import LearnPanel from './components/LearnPanel';
+import FootballPanel from './components/FootballPanel';
 import { AppSettings } from './types';
 
 const navItems = [
   { id: 'home', icon: 'home', labelKey: 'home' },
   { id: 'translate', icon: 'translate', labelKey: 'translate' },
   { id: 'learn', icon: 'school', labelKey: 'learn' },
+  { id: 'football', icon: 'sports_soccer', labelKey: 'football' },
   { id: 'map', icon: 'map', labelKey: 'map' },
   { id: 'emergency', icon: 'warning', labelKey: 'emergency' },
   { id: 'negotiate', icon: 'attach_money', labelKey: 'negotiate' },
@@ -20,7 +22,7 @@ const navItems = [
 ] as const;
 
 function App() {
-  const [currentView, setCurrentView] = useState<'home' | 'translate' | 'learn' | 'map' | 'emergency' | 'negotiate' | 'settings'>('home');
+  const [currentView, setCurrentView] = useState<'home' | 'translate' | 'learn' | 'football' | 'map' | 'emergency' | 'negotiate' | 'settings'>('home');
   const [settings, setSettings] = useState<AppSettings>({
     language: 'es',
     soundEnabled: true,
@@ -36,6 +38,7 @@ function App() {
       home: { es: 'Inicio', fr: 'Accueil', en: 'Home' },
       translate: { es: 'Traducir', fr: 'Traduire', en: 'Translate' },
       learn: { es: 'Aprender', fr: 'Apprendre', en: 'Learn' },
+      football: { es: 'Fútbol', fr: 'Football', en: 'Football' },
       map: { es: 'Mapa', fr: 'Carte', en: 'Map' },
       emergency: { es: 'Emergencia', fr: 'Urgence', en: 'Emergency' },
       negotiate: { es: 'Negociar', fr: 'Négocier', en: 'Negotiate' },
@@ -83,6 +86,8 @@ function App() {
         return <TranslationPanel settings={settings} />;
       case 'learn':
         return <LearnPanel settings={settings} />;
+      case 'football':
+        return <FootballPanel settings={settings} />;
       case 'map':
         return <MapPanel settings={settings} />;
       case 'emergency':

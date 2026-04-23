@@ -2,7 +2,7 @@ import React from 'react';
 import { AppSettings } from '../types';
 
 interface QuickActionsProps {
-  setCurrentView: (view: 'home' | 'translate' | 'emergency' | 'negotiate' | 'settings' | 'map') => void;
+  setCurrentView: (view: 'home' | 'translate' | 'emergency' | 'negotiate' | 'settings' | 'map' | 'football') => void;
   settings: AppSettings;
 }
 
@@ -41,7 +41,7 @@ const QuickActions: React.FC<QuickActionsProps> = ({ setCurrentView, settings })
       icon: 'sports_soccer',
       text: settings.language === 'es' ? 'Fútbol' : settings.language === 'fr' ? 'Football' : 'Football',
       color: 'primary',
-      action: () => setCurrentView('translate')
+      action: () => setCurrentView('football')
     },
     {
       id: 'negotiate',

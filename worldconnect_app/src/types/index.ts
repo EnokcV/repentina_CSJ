@@ -61,6 +61,21 @@ export interface Match {
   status: 'upcoming' | 'live' | 'finished';
 }
 
+export interface FootballMatch {
+  id: string;
+  homeTeam: Team;
+  awayTeam: Team;
+  homeScore: number | null;
+  awayScore: number | null;
+  date: string;
+  time: string;
+  stadium: string;
+  city: string;
+  phase: string;
+  group?: string;
+  status: 'upcoming' | 'live' | 'finished';
+}
+
 export interface Team {
   id: string;
   name: string;
